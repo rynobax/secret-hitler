@@ -1,0 +1,69 @@
+<!doctype html>
+<html ng-app="stuffGameApp">
+<head>
+  <meta charset="utf-8">
+
+  <base href="/">
+
+  <title>Secret Hitler</title>
+
+  <!-- jquery files -->
+  <script src="assets/js/jquery.min.js"></script>
+
+  <!-- Bootstrap files -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+  <script src="assets/js/bootstrap.min.js"></script>
+
+  <!-- Angular files -->
+  <script src="assets/js/angular.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.2/angular-ui-router.js"></script>
+
+  <!-- socket.io -->
+  <script src="//cdn.socket.io/socket.io-1.4.5.js"></script>
+
+  <!-- js files -->
+    <!-- Base App -->
+    <script src="app.module.js"></script>
+    <script src="app.states.js"></script>
+
+    <!-- Initial Controllers -->
+    <script src="app/components/initial/initialController.js"></script>
+
+    <!-- Host Controllers -->
+    <script src="app/components/host/hostController.js"></script>
+    <script src="app/components/host/lobby/lobbyController.js"></script>
+    <script src="app/components/host/prompt/promptController.js"></script>
+    <script src="app/components/host/answers/answersController.js"></script>
+    <script src="app/components/host/voteResults/voteResultsController.js"></script>
+    <script src="app/components/host/roundResults/roundResultsController.js"></script>
+    <script src="app/components/host/gameResults/gameResultsController.js"></script>
+
+    <!-- Player Controllers -->
+    <script src="app/components/player/join/joinController.js"></script>
+    <script src="app/components/player/game/gameController.js"></script>
+    <script src="app/components/player/game/awaitStart/awaitStartController.js"></script>
+    <script src="app/components/player/game/idle/idleController.js"></script>
+    <script src="app/components/player/game/answerPrompt/answerPromptController.js"></script>
+    <script src="app/components/player/game/vote/voteController.js"></script>
+
+    <!-- Services -->
+    <script src="app/shared/sessionService.js"></script>
+
+  <!-- css files -->
+  <link rel="stylesheet" href="assets/css/custom.css" />
+</head>
+<body>
+  <!-- HEADER AND NAVBAR -->
+  <header>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </header>
+
+  <!-- MAIN CONTENT AND INJECTED VIEWS -->
+  <div id="main">
+    <!-- angular templating -->
+    <!-- this is where content will be injected -->
+    <ui-view></ui-view>
+  </div>
+
+</body>
+</html>

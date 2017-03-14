@@ -1,0 +1,31 @@
+<h2 class="text-center" id="header">Join a Secret Hitler Game</h1>
+<form ng-submit="submit()">
+  <div>
+    <label for="roomCodeInput">Room Code</label>
+    <input
+      type="text"
+      class="form-control"
+      id="roomCodeInput"
+      ng-model="roomCode"
+      required
+      maxlength="4"
+			autocapitalize="characters"
+      >
+  </div>
+  <div>
+    <label for="nameInput">Name</label>
+    <input
+      type="text"
+      class="form-control"
+      id="nameInput"
+      ng-model="name"
+      required
+      maxlength="12"
+			autocapitalize="characters"
+      >
+  </div>
+  <br />
+  <div class="text-center">
+    <button id="submitButton" type="submit" class="btn-lg btn-primary">Submit</button>
+  </div>
+</form>

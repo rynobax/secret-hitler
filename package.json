@@ -1,0 +1,33 @@
+{
+  "name": "secret-hitler",
+  "version": "1.0.0",
+  "description": "A web application for playing secret hitler",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "protractor tests/conf.js",
+    "webdriver": "webdriver-manager start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rynobax/secret-hitler.git"
+  },
+  "keywords": [
+    "Secret",
+    "Hitler"
+  ],
+  "author": "Ryan Baxley",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rynobax/secret-hitler/issues"
+  },
+  "homepage": "https://github.com/rynobax/secret-hitler#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "lodash": "^4.17.4",
+    "morgan": "^1.7.0",
+    "socket.io": "^1.7.2"
+  }
+}
