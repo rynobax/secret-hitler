@@ -1,4 +1,4 @@
-stuffGameApp.controller('joinController', function($scope, $state, sessionService) {
+secretHitlerApp.controller('joinController', function($scope, $state, sessionService) {
   $scope.roomCode = '';
   $scope.name = '';
 
@@ -16,19 +16,20 @@ stuffGameApp.controller('joinController', function($scope, $state, sessionServic
   }
 
 	socket.on('joinGameResponse', res => {
-		if(res == 'full'){
+		if(res.result == 'full'){
 			alert('Game is full!');
 		}
-		else if (res == 'dne'){
+		else if (res.result == 'dne'){
 			alert('Game "' + submittedCode + '" does not exist!');
 		}
-		else if (res == 'repeatName'){
+		else if (res.result == 'repeatName'){
 			alert('Someone is already using the name ' + submittedName + '!');
 		}
 		else{
 			socket.off('joinGameResponse');
 			sessionService.name = submittedName;
 			sessionService.code = submittedCode;
+			sessionService.resumeState = res.state;
 			$state.transitionTo('game.awaitStart');
 		}
 	});

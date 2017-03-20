@@ -1,0 +1,28 @@
+<!-- Liberal -->
+<div ng-show="role == 'Liberal'">
+  <h2>You are a liberal!</h2>
+</div>
+
+<!-- Fascist -->
+<div ng-show="role == 'Fascist'">
+  <h2>You are a fascist!</h2>
+  Fascists:
+  <ul class="list-group" ng-repeat="player in fascists">
+    <li class="list-group-item">{{player.name}}</li>
+  </ul>
+  Hitler:
+  <ul class="list-group" ng-repeat="player in hitlers">
+    <li class="list-group-item">{{player.name}}</li>
+  </ul>
+</div>
+
+<!-- Hitler -->
+<div ng-show="role == 'Hitler'">
+  <h2>You are Hitler!</h2>
+  <div ng-show="players.length > 8">
+    Fascists:
+    <ul class="list-group" ng-repeat="player in facists">
+      <li class="list-group-item">{{player.name}}</li>
+    </ul>
+  </div>
+</div>

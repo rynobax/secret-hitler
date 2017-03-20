@@ -1,3 +1,3 @@
-stuffGameApp.controller('idleController', function($scope, sessionService) {
-		$scope.text = sessionService.data.text;
+secretHitlerApp.controller('idleController', function($scope, sessionService) {
+	$scope.idleText = sessionService.state.mode.data.text;
 });

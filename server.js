@@ -21,6 +21,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 
 /* Angular App */
+app.get('/test', function(req, res, next) {
+  res.sendfile('./public/test.html');
+});
 app.get('/', function(req, res, next) {
   res.sendfile('./public/index.html');
 });

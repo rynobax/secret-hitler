@@ -1,14 +1,7 @@
-module.exports.simulateGame = function(playerCount, done){
-    const actors = createActors(playerCount);
-    createGame(actors)
-        .then(code => Promise.all(actors.players.map(p => joinGame(p, code))))
-        .then(() => startGame(actors))
-        .then(() => checkRoles(actors))
-        .then(done)
-        .catch(err => {
-            console.log('Caught error: ', err);
-            done();
-        });
+module.exports.simulateGame = function(playerCount){
+    it('creates a game', () => {
+        browser.get('http://localhost:7171');
+    });
 }
 
 function createActors(playerCount){
@@ -48,16 +41,26 @@ function joinGame({name, browser}, code){
         browser.findElement(by.id('nameInput')).sendKeys(name);
         browser.findElement(by.id('submitButton')).click();
         expect(browser.findElement(by.id('header')).getText()).toEqual(name.toUpperCase());
+        console.log(name + ' joined game');
         resolve();
     });
 }
 
 function startGame({players}){
-    players[0].brower.findElement(by.id('startGameButton')).click();
+    return new Promise((resolve, reject) => {
+        console.log(players[0].name + ' starting game');
+        players[0].browser.findElement(by.id('startGameButton')).click();
+        resolve();
+    });
 }
 
 function checkRoles({players}){
-    // Check those roles
+    return new Promise((resolve, reject) => {  
+        const roles = [];
+        players.forEach(player => {
+            roles.push(0);
+        });
+    });
 }
 
 /* Promise template

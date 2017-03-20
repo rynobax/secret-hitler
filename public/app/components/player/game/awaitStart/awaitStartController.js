@@ -1,13 +1,13 @@
-stuffGameApp.controller('awaitStartController', function($scope) {
+secretHitlerApp.controller('awaitStartController', function($scope, sessionService) {
 	$scope.canStartGame = false;
+
+	try{
+		$scope.canStartGame = sessionService.state.mode.data.ready;
+	}catch(e){
+		console.log('Error: ', e);
+	}
 
 	$scope.start = function(){
 		socket.emit('startGameRequest');
 	}
-
-	socket.on('canStartGame', (canStartGame) => {
-		console.log('canStartGame: ', canStartGame);
-		$scope.canStartGame = canStartGame;
-		$scope.$apply();
-	});
 });

@@ -1,2 +1,2 @@
-const stuffGameApp = angular.module('stuffGameApp', ['ui.router']);
+const secretHitlerApp = angular.module('secretHitlerApp', ['ui.router']);
 const socket = io();

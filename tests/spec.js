@@ -14,5 +14,5 @@ describe('Secret Hitler', () => {
     expect(browser.getTitle()).toEqual('Secret Hitler');
   });
 
-  it('Can play a game', simulate.simulateGame.bind(null, 5));
+  describe('Can play a game', simulate.simulateGame.bind(null, 5));
 });

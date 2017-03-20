@@ -1,6 +1,40 @@
-<nav class="navbar navbar-inverse">
-  <div class="container-fluid text-center">
-      <h1 id="header">{{header}}</h1>
+<style>
+.myHeader
+{
+    background-color: #Aba6cb;
+    margin: 0px;
+    padding: 0px;
+    height: 80px;
+}
+#infoButton
+{
+  height: 80px;
+  width: 80px;
+}
+</style>
+
+<role-modal></role-modal>
+
+<div class='myHeader container-fluid'>
+  <div class="row">
+    <div class="col-xs-2">
+    </div>
+    <div class="col-xs-8 text-center">
+      <h1 id="header">{{name}}</h1>
+    </div>
+    <div class="col-xs-2">
+      <button 
+        id="infoButton" 
+        type="button" 
+        class="btn btn-info pull-right" 
+        data-toggle="modal" 
+        data-target="#roleModal"
+        ng-show="!!me.role"
+        >
+        <i class="fa fa-info-circle fa-3x"></i>
+      </button>
+    </div>
   </div>
-</nav>
+</div>
+
 <ui-view></ui-view>

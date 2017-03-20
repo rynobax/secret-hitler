@@ -1,4 +1,4 @@
-stuffGameApp.config(function($stateProvider, $locationProvider) {
+secretHitlerApp.config(function($stateProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
 
   /* Initial States */
@@ -22,29 +22,9 @@ stuffGameApp.config(function($stateProvider, $locationProvider) {
 	    templateUrl: '/app/components/host/lobby/lobby.html'
   	})
 		.state({
-			name: 'host.prompt',
-			controller: 'promptController',
-			templateUrl: '/app/components/host/prompt/prompt.html'
-		})
-		.state({
-			name: 'host.answers',
-			controller: 'answersController',
-			templateUrl: '/app/components/host/answers/answers.html'
-		})
-		.state({
-			name: 'host.voteResults',
-			controller: 'voteResultsController',
-			templateUrl: '/app/components/host/voteResults/voteResults.html'
-		})
-		.state({
-			name: 'host.roundResults',
-			controller: 'roundResultsController',
-			templateUrl: '/app/components/host/roundResults/roundResults.html'
-		})
-		.state({
-			name: 'host.gameResults',
-			controller: 'gameResultsController',
-			templateUrl: '/app/components/host/gameResults/gameResults.html'
+			name: 'host.board',
+			controller: 'boardController',
+			templateUrl: '/app/components/host/board/board.html'
 		});
 
   $stateProvider.state({
@@ -66,22 +46,29 @@ stuffGameApp.config(function($stateProvider, $locationProvider) {
     templateUrl: '/app/components/player/game/game.html',
 		abstract: true
   })
-		.state({
-	    name: 'game.awaitStart',
-	    controller: 'awaitStartController',
-	    templateUrl: '/app/components/player/game/awaitStart/awaitStart.html'
-  	})
-		.state({
-	    name: 'game.idle',
-	    controller: 'idleController',
-	    templateUrl: '/app/components/player/game/idle/idle.html'
-	  }).state({
-	    name: 'game.answerPrompt',
-	    controller: 'answerPromptController',
-	    templateUrl: '/app/components/player/game/answerPrompt/answerPrompt.html'
-	  }).state({
-	    name: 'game.vote',
-	    controller: 'voteController',
-	    templateUrl: '/app/components/player/game/vote/vote.html'
-	  });
+	.state({
+		name: 'game.awaitStart',
+		controller: 'awaitStartController',
+		templateUrl: '/app/components/player/game/awaitStart/awaitStart.html'
+	})
+	.state({
+		name: 'game.idle',
+		controller: 'idleController',
+		templateUrl: '/app/components/player/game/idle/idle.html'
+	})
+  .state({
+		name: 'game.chooseOne',
+		controller: 'chooseOneController',
+		templateUrl: '/app/components/player/game/chooseOne/chooseOne.html'
+	})
+  .state({
+		name: 'game.showRoles',
+		controller: 'showRolesController',
+		templateUrl: '/app/components/player/game/showRoles/showRoles.html'
+	})
+  .state({
+		name: 'game.voteChancellor',
+		controller: 'yesNoController',
+		templateUrl: '/app/components/player/game/yesNo/yesNo.html'
+	})
 });
