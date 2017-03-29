@@ -10,6 +10,7 @@ module.exports = function(_code, _socket, _io){
 	 * 	string name
 	 * 	Socket socket
 	 * 	string role
+	 * 	bool	 alive
 	 */
 	let players = [];
 
@@ -87,7 +88,6 @@ module.exports = function(_code, _socket, _io){
 	}
 	
 	function getFascistEnactedCount(){
-		console.log(enacted);
 		return enacted.filter(e => e == 'Fascist').length;
 	}
 	
@@ -106,7 +106,8 @@ module.exports = function(_code, _socket, _io){
 			players: players.map(e => {
 				return {
 					name: e.name,
-					role: e.role
+					role: e.role,
+					alive: e.alive
 				}
 			}
 			),
@@ -152,6 +153,7 @@ module.exports = function(_code, _socket, _io){
 	function beginRound(){
 		if(!specialPresidentRound){
 			setNextPresident();
+		}else{
 			specialPresidentRound = false;
 		}
 		shuffleIfNecessary();
@@ -182,7 +184,6 @@ module.exports = function(_code, _socket, _io){
 					const lastPolicyEnacted = enacted.slice(-1)[0];
 					if(lastPolicyEnacted == 'Fascist'){
 						const ability = getPresidentialAbility();
-						console.log('The ability is ' + ability);
 						switch(ability){
 							case null:
 								return;
@@ -216,23 +217,48 @@ module.exports = function(_code, _socket, _io){
 	}
 
 	function examineCards(){
-		// Examine the top 3 cards
+		// Examine the top 3 cards on draw pile
 		return new Promise((resolve, reject) => {
-			
+			const cards = drawCards(3);
+			drawPile.push(...cards);
+			emitState({
+				name: 'examineCards',
+				cards: cards
+			});
+			findPlayer(president).once('examineCardsResponse', () => {
+				resolve(false);
+			});
 		});
 	}
 
 	function killPlayer(){
 		// Kill another player
 		return new Promise((resolve, reject) => {
-			
+			emitState({
+				name: 'killPlayer'
+			});
+			findPlayer(president).once('killPlayerResponse', (player) => {
+				if(player.role == 'Hitler'){
+					// Hitler was killed, so the game ends
+					resolve('Liberal');
+				}else{
+					// Kill the player and continue the game
+					findPlayer(player).alive = false;
+					resolve(false);
+				}
+			});
 		});
 	}
 
 	function investigatePlayer(){
 		// Investigate another player's affiliation
 		return new Promise((resolve, reject) => {
-			
+			emitState({
+				name: 'investigatePlayer'
+			});
+			findPlayer(president).once('investigatePlayerResponse', (player) => {
+				resolve(false);
+			});
 		});
 	}
 
@@ -240,6 +266,13 @@ module.exports = function(_code, _socket, _io){
 		// Pick the next president
 		return new Promise((resolve, reject) => {
 			specialPresidentRound = true;
+			emitState({
+				name: 'pickNextPresident'
+			});
+			findPlayer(president).once('pickNextPresidentResponse', (player) => {
+				president = player;
+				resolve(false);
+			});
 		});
 	}
 
@@ -284,7 +317,7 @@ module.exports = function(_code, _socket, _io){
 				}
 			})
 			.catch(e => {
-				console.log('Error: ' + e);
+				console.error('Error: ' + e);
 			})
 			.then(resolve);
 		});
@@ -358,13 +391,11 @@ module.exports = function(_code, _socket, _io){
 			const cards = drawCards(3);
 			givePresidentCards(cards)
 				.then(removed => {
-					console.log('removing ', removed);
 					discardPile.push(removed);
 					cards.splice(_.findIndex(removed), 1);
 					return giveChancellorCards(cards);
 				})
 				.then(enact => {
-					console.log('Enacting: ' + enact);
 					// TODO: Add support for vetoing
 					if(enact == null){
 						// It was vetoed
