@@ -2,13 +2,13 @@
   <h2>{{header}}</h2>
 </div>
 <div>
-  <div ng-repeat="player in players">
+  <div ng-repeat="choice in choices track by $index">
     <button 
       class="btn btn-default" 
-      ng-click="clickPlayer(player)"
+      ng-click="clickChoice(choice)"
       data-toggle="modal" 
       data-target="#confirmModal">
-      {{player}}
+      {{choice}}
     </button>
   </div>
 </div>

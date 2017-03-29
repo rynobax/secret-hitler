@@ -13,42 +13,95 @@ module.exports = function(_code, _socket, _io){
 	 */
 	let players = [];
 
+	function findPlayer(name){
+		return _.find(players, ['name', name]);
+	}
+
+	let started = false;
+
 	const code = _code;
-	const mode = {
-		name: 'lobby',
-		data: {
-			ready: false
-		}
-	};
 
 	_socket.join(code);
 	const sockets = _io.in(code);
 
 	/* The names of the officials */
 	let president;
+	let lastPresident;
 	let chancellor;
 	let lastChancellor;
 
+	/* Constants */
+	const liberalPoliciesToWin = 5;
+	const fascistPoliciesToWin = 6;
+	const fascistHitlerThreshold = 3;
+
+	/* Hitler can win */
+	let hitlerCanWin = false;
+
+	/* Ability */
+	let specialPresidentRound = false;
+
+	/* Presidential Abilities */
+	function getPresidentialAbility(){
+		const playerCount = players.length
+		const fascistEnacted = getFascistEnactedCount();
+		let abilities = [];
+		switch(playerCount){
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+				abilities = [null, null, 'examine', 'kill', 'kill', null];
+				break;
+			case 7:
+			case 8:
+				abilities = [null, 'investigate', 'pick', 'kill', 'kill', null];
+				break;
+			case 9:
+			case 10:
+				abilities = ['investigate', 'investigate', 'pick', 'kill', 'kill', null];
+				break;
+			default:
+				throw Error('Too many players!');
+				break;
+		}
+		return abilities[fascistEnacted-1];
+	}
+
+	/* Failed election tracker */
+	let failedElectionCount = 0;
+
 	/* Policy tracker */
-	const policies = {
-		liberal: 0,
-		fascist: 0
-	};
-	const drawPile = [];
-	const discardPile = [];
+	let enacted = [];
+	let drawPile = [];
+	let discardPile = [];
+
+	/* Initialize the pile */
 	for(let i=0; i<11; i++){
 		discardPile.push('Fascist');
 	}
 	for(let i=0; i<6; i++){
 		discardPile.push('Liberal');
 	}
-	function drawCards(){
+	
+	function getFascistEnactedCount(){
+		console.log(enacted);
+		return enacted.filter(e => e == 'Fascist').length;
+	}
+	
+	function getLiberalEnactedCount(){
+		return enacted.filter(e => e == 'Liberal').length;
+	}
+
+	function drawCards(n){
 		// Removes cards, so make sure you add them to discard pile
-		return drawPile.splice(0, 3);
+		return drawPile.splice(0, n);
 	}
 
 	/* Create the state object sent to the clients */
-	const getState = function(){
+	function getState(phase){
 		return {
 			players: players.map(e => {
 				return {
@@ -57,64 +110,144 @@ module.exports = function(_code, _socket, _io){
 				}
 			}
 			),
-			mode: mode,
-			code: code
+			phase: phase,
+			code: code,
+			president: president,
+			chancellor: chancellor,
+			lastChancellor: lastChancellor,
+			lastPresident: lastPresident
 		}
 	}
 
-	const addPlayer = function(name, playerSocket){
-		if(mode.name != 'lobby') return false;
+	function addPlayer(name, playerSocket){
+		if(started) return false;
 		if(players.length < 10){
 			const player = Player(name, playerSocket);
-    		players.push(player);
+    	players.push(player);
 			playerSocket.join(code);
-			mode.data = {};
-			mode.data.ready = true;
 			playerSocket.on('startGameRequest', start);
-			emitState();
+			emitState({
+				name: 'lobby',
+				ready: true
+			});
 			return true;
 		}else{
 			return false;
 		}
 	}
 
-	const emitState = function(){
-		sockets.emit('state', getState());
+	function emitState(phase){
+		sockets.emit('state', getState(phase));
 	}
 
-	const findPlayer = function(name){
-		return _.find(players, ['name', name]);
-	}
-
-	const start = function(){
+	function start(){
+		hitlerCanWin = false;
 		assignRoles();
 		randomizePresidentOrder();
 		showRoles();
+		started = true;
 		setTimeout(beginRound, 1000);
 	}
 
 	function beginRound(){
-		setNextPresident();
+		if(!specialPresidentRound){
+			setNextPresident();
+			specialPresidentRound = false;
+		}
 		shuffleIfNecessary();
 		legislate()
-			.then((policy) => {
-				// If liberals have enough policies, they win
-				// If fascists have enough policies, they win
-				// If Hitler is chancellor and enough fascist policies, the game ends
-				// If a fascist was enacted and a power needs to be used, use it
+			.then((policyEnacted) => {
+				if(policyEnacted){
+					// If liberals have enough policies, they win
+					if(getLiberalEnactedCount() == liberalPoliciesToWin){
+						return 'Liberal';
+					}
+
+					// If fascists have enough policies, they win
+					if(getFascistEnactedCount() == fascistPoliciesToWin){
+						return 'Fascist';
+					}
+
+					// If Hitler is chancellor and enough fascist policies, the game ends
+					if(hitlerCanWin && findPlayer(chancellor).role == 'Hitler'){
+						return 'Fascist';
+					}
+
+					// If enough facist policies are enacted, hitler can win by being elected chancellor
+					if(getFascistEnactedCount() == fascistHitlerThreshold){
+						hitlerCanWin = true;
+					}
+
+					// If a fascist was enacted and a power needs to be used, use it
+					const lastPolicyEnacted = enacted.slice(-1)[0];
+					if(lastPolicyEnacted == 'Fascist'){
+						const ability = getPresidentialAbility();
+						console.log('The ability is ' + ability);
+						switch(ability){
+							case null:
+								return;
+							case 'examine':
+								return examineCards();
+								break;
+							case 'kill':
+								return killPlayer();
+								break;
+							case 'investigate':
+								return investigatePlayer();
+								break;
+							case 'pick':
+								return pickNextPresident();
+								break;
+							default:
+								throw Error('Invalid ability');
+						}
+					}
+				}else{
+					return false;
+				}
 			})
-			.then((gameOver) => {
-				if(gameOver){
-					console.log('The game is over');
+			.then((winner) => {
+				if(winner){
+					console.log('The game is over, ' + winner + ' won');
 				}else{
 					beginRound();
 				}
 			});
 	}
 
+	function examineCards(){
+		// Examine the top 3 cards
+		return new Promise((resolve, reject) => {
+			
+		});
+	}
+
+	function killPlayer(){
+		// Kill another player
+		return new Promise((resolve, reject) => {
+			
+		});
+	}
+
+	function investigatePlayer(){
+		// Investigate another player's affiliation
+		return new Promise((resolve, reject) => {
+			
+		});
+	}
+
+	function pickNextPresident(){
+		// Pick the next president
+		return new Promise((resolve, reject) => {
+			specialPresidentRound = true;
+		});
+	}
+
 	function showRoles(){
-		mode.name = 'showRoles';
-		emitState();
+		emitState(
+			emitState({
+				name: 'showRoles'
+			}));
 	}
 
 	function shuffleIfNecessary(){
@@ -124,7 +257,7 @@ module.exports = function(_code, _socket, _io){
 		}
 	}
 
-	// Resolves the policy that was enacted ('Facist', 'Liberal', or null)
+	// Resolves true if policy was enacted, false if not
 	function legislate(){
 		// Legislation has started
 		return new Promise((resolve, reject) => {
@@ -133,14 +266,21 @@ module.exports = function(_code, _socket, _io){
 				return voteOnChancellor(chancellor);
 			})
 			.then((votePassed) => {
-				return notifyVoteResult();
+				return notifyVoteResult(votePassed);
 			})
 			.then((votePassed) => {
 				if(votePassed){
+					failedElectionCount = 0;
 					return enactPolicy();
 				}else{
-					// TODO: Move failed vote tracker and take action if necessary
-					return Promise.resolve(null);	
+					failedElectionCount++;
+					if(failedElectionCount > 3){
+						failedElectionCount = 0;
+						enacted.push(drawCards(1));
+						return true;
+					}else{
+						return false;	
+					}
 				}
 			})
 			.catch(e => {
@@ -152,14 +292,9 @@ module.exports = function(_code, _socket, _io){
 	
 	// Resolves choice for next chancellor (chosen by president)
 	function chooseChancellor(){
-		mode.name = 'chooseChancellor';
-		mode.data = {};
-		mode.data.president = president;
-		mode.data.chancellor = chancellor;
-		mode.data.lastChancellor = lastChancellor;
-		mode.data.text = 'Wait for a chancellor to be selected...';
-		mode.data.presidentText = 'Select your chancellor...';
-		setTimeout(emitState, 1000);
+		emitState({
+			name: 'chooseChancellor'
+		});
 		return new Promise((resolve, reject) => {
 			findPlayer(president).socket.on('chooseChancellorResponse', (chancellor) => {
 				resolve(chancellor);
@@ -169,12 +304,10 @@ module.exports = function(_code, _socket, _io){
 
 	// Resolves result of overall vote (true or false)
 	function voteOnChancellor(nominatedChancellor){
-		mode.name = 'voteChancellor';
-		mode.data = {};
-		mode.data.president = president;
-		mode.data.chancellor = nominatedChancellor;
-		mode.data.lastChancellor = lastChancellor;
-		setTimeout(emitState, 1000);
+		emitState({
+			name: 'voteChancellor',
+			nominatedChancellor: nominatedChancellor
+		});
 		return new Promise((resolve, reject) => {
 			Promise.all(players.map(player => getChancellorVote(player)))
 				.then(res => {
@@ -189,7 +322,12 @@ module.exports = function(_code, _socket, _io){
 					}, {true: 0, false: 0});
 				})
 				.then(votes => {
-					resolve(votes.true >= votes.false);
+					if(votes.true >= votes.false){
+						chancellor = nominatedChancellor;
+						resolve(true);
+					}else{
+						resolve(false);
+					}
 				});
 		});
 	}
@@ -197,16 +335,10 @@ module.exports = function(_code, _socket, _io){
 	// Resolves individual vote result (true or false)
 	function notifyVoteResult(votePassed){
 		return new Promise((resolve, reject) => {
-			mode.name = 'voteResult';
-			mode.data = {};
-			mode.data.president = president;
-			mode.data.chancellor = chancellor;
-			if(votePassed){
-				mode.data.text = 'Vote passed!';
-			}else{
-				mode.data.text = 'Vote failed!';
-			}
-			emitState();
+			emitState({
+				name: 'voteResult',
+				result: votePassed
+			});
 			setTimeout(() => resolve(votePassed), 1000);
 		});
 	}
@@ -219,43 +351,44 @@ module.exports = function(_code, _socket, _io){
 		});
 	}
 
-	// Resolves the card ENACTED ('Fascist' or 'Liberal')
+	// Resolves true if card was enacted, false if not
+	// Removes card from piles
 	function enactPolicy(){
 		return new Promise((resolve, reject) => {
-			const cards = drawCards();
+			const cards = drawCards(3);
 			givePresidentCards(cards)
 				.then(removed => {
+					console.log('removing ', removed);
 					discardPile.push(removed);
 					cards.splice(_.findIndex(removed), 1);
 					return giveChancellorCards(cards);
 				})
 				.then(enact => {
+					console.log('Enacting: ' + enact);
+					// TODO: Add support for vetoing
 					if(enact == null){
 						// It was vetoed
 						cards.forEach((card) => {
 							discardPile.push(card);
 						});
-						resolve(null);
+						resolve(false);
 					}else{
 						// Something was enacted
 						cards.splice(_.findIndex(enact), 1);
 						discardPile.push(cards[0]);
-						resolve(enact);
+						enacted.push(enact);
+						resolve(true);
 					}
 				});
 		});
 	}
 
-	// RESUME Implement the below 2 functions on the front end
-
 	// Resolves the card REMOVED ('Fascist' or 'Liberal')
 	function givePresidentCards(cards){
-		mode.name = 'presidentChooseCard';
-		mode.data = {};
-		mode.data.text = 'President is selecting a card to discard';
-		mode.data.cards = cards;
-		mode.data.presidentText = 'Select a card to discard';
-		setTimeout(emitState, 1000);
+		emitState({
+			name: 'presidentChooseCard',
+			cards: cards
+		});
 		return new Promise((resolve, reject) => {
 			findPlayer(president).socket.on('presidentChooseCardResponse', (discard) => {
 				resolve(discard);
@@ -265,14 +398,12 @@ module.exports = function(_code, _socket, _io){
 
 	// Resolves the card ENACTED ('Fascist' or 'Liberal') OR null if choices are vetoed
 	function giveChancellorCards(cards){
-		mode.name = 'chancellorChooseCard';
-		mode.data = {};
-		mode.data.text = 'Chancellor is selecting a card to enact';
-		mode.data.cards = cards;
-		mode.data.chancellorText = 'Select a card to enact';
-		setTimeout(emitState, 1000);
+		emitState({
+			name: 'giveChancellorCards',
+			cards: cards
+		});
 		return new Promise((resolve, reject) => {
-			findPlayer(president).socket.on('chancellorChooseCardResponse', (enact) => {
+			findPlayer(chancellor).socket.on('chancellorChooseCardResponse', (enact) => {
 				resolve(enact);
 			});
 		});
@@ -300,16 +431,10 @@ module.exports = function(_code, _socket, _io){
 		players.push(players.shift());
 		if(votePassed){
 			lastChancellor = chancellor;
+			lastPresident = president;
 		}
 		chancellor = '';
 		president = players[0].name;
-	}
-
-	function getChancellorCandidates(){
-		return players.map(e => e.name).filter(player => {
-			if(player === lastPresident || player === lastChancellor) return false;
-			return true;
-		});
 	}
 
 	/* Return public methods */

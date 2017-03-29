@@ -1,6 +1,5 @@
 secretHitlerApp.controller('yesNoController', function($scope, $state, sessionService) {
     const players = sessionService.state.players.map(e => e.name);
-    const data = sessionService.state.mode.data;
     const name = sessionService.state.mode.name;
 
     $scope.players = [];
@@ -16,10 +15,8 @@ secretHitlerApp.controller('yesNoController', function($scope, $state, sessionSe
     }
 
     function voteChancellor(){
-        const president = data.president;
-        const chancellor = data.chancellor;
-        const lastPresident = data.lastPresident;
-        const lastChancellor = data.lastChancellor;
+        const president = sessionService.state.president;
+        const chancellor = sessionService.state.mode.data.nominatedChancellor;
         const headerText = 'Elect '+president+' and '+chancellor+'?';
         $scope.header = headerText;
     }

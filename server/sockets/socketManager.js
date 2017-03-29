@@ -14,3 +14,5 @@ module.exports.connect = function(socket){
 module.exports.setIo = function(_io){
 	io = _io;
 }
+
+module.exports.gameCoordinator = gameCoordinator;

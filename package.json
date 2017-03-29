@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test": "protractor tests/conf.js",
+    "test-client": "protractor tests/client/conf.js",
+    "test-server": "mocha tests/server/testrunner.js",
     "webdriver": "webdriver-manager start"
   },
   "repository": {
@@ -29,5 +30,9 @@
     "lodash": "^4.17.4",
     "morgan": "^1.7.0",
     "socket.io": "^1.7.2"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
   }
 }

@@ -33,6 +33,7 @@ io.on('connection', socketManager.connect);
 
 module.exports.start = function(port = 8080){
   http.listen(port, function(){
-    console.log('listening on *:'+port);
   });
+
+  return socketManager.gameCoordinator;
 }

@@ -1,43 +1,74 @@
 secretHitlerApp.controller('chooseOneController', function($scope, $state, sessionService) {
-    const players = sessionService.state.players.map(e => e.name);
-    const data = sessionService.state.mode.data;
-    const name = sessionService.state.mode.name;
+    $scope.choices = [];
+    $scope.selected = null;
 
-    $scope.players = [];
-    $scope.selectedPlayer = null;
+    $scope.clickChoice = function(player){
+        $scope.selected = player;
+    }
 
-    switch(name){
+    $scope.clickBack = function(){
+        $scope.selected = null;
+    }
+
+    
+    switch(sessionService.state.mode.name){
         case 'chooseChancellor':
             chooseChancellor();
+            break;
+        case 'presidentChooseCard':
+            presidentChooseCard();
+            break;
+        case 'chancellorChooseCard':
+            chancellorChooseCard();
             break;
         default:
             break;
     }
 
     function chooseChancellor(){
-        const president = data.president;
-        const chancellor = data.chancellor;
-        const lastPresident = data.lastPresident;
-        const lastChancellor = data.lastChancellor;
+        const players = sessionService.state.players.map(e => e.name);
+        const data = sessionService.state.mode.data;
+        const president = sessionService.state.president;
+        const chancellor = sessionService.state.chancellor;
+        const lastPresident = sessionService.state.lastPresident;
+        const lastChancellor = sessionService.state.lastChancellor;
         const headerText = 'Choose your chancellor!';
         $scope.header = headerText;
-        $scope.confirmText = () => 'Confirm ' + $scope.selectedPlayer + ' as your chancellor?';
-        $scope.players = players.filter(player => {
+        $scope.confirmText = () => 'Confirm ' + $scope.selected + ' as your chancellor?';
+        $scope.choices = players.filter(player => {
             if(player == president || player == lastPresident || player == lastChancellor) return false;
             return true;
         });
-
-        $scope.clickPlayer = function(player){
-            $scope.selectedPlayer = player;
-        }
-
-        $scope.clickBack = function(){
-            $scope.selectedPlayer = null;
-        }
+        console.log('$scope.choices: ', $scope.choices);
 
         $scope.confirm = function(){
-            console.log('You picked ' + $scope.selectedPlayer);
-            socket.emit('chooseChancellorResponse', $scope.selectedPlayer);
+            socket.emit('chooseChancellorResponse', $scope.selected);
+        };
+    }
+
+    function presidentChooseCard(){
+        const data = sessionService.state.mode.data;
+        const headerText = 'Choose a card to discard!';
+        $scope.header = headerText;
+        $scope.confirmText = () => 'Discard a ' + $scope.selected + ' card?';
+        $scope.choices = data.cards;
+
+        $scope.confirm = function(){
+            console.log('You picked ' + $scope.selected);
+            socket.emit('presidentChooseCardResponse', $scope.selected);
+        };
+    }
+
+    function chancellorChooseCard(){
+        const data = sessionService.state.mode.data;
+        const headerText = 'Choose a card to enact!';
+        $scope.header = headerText;
+        $scope.confirmText = () => 'Enact a ' + $scope.selected + ' card?';
+        $scope.choices = data.cards;
+
+        $scope.confirm = function(){
+            console.log('You picked ' + $scope.selected);
+            socket.emit('chancellorChooseCardResponse', $scope.selected);
         };
     }
 });

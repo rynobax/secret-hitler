@@ -1,5 +1,5 @@
 // spec.js
-const server = require('../server.js');
+const server = require('../../server.js');
 const simulate = require('./simulateGame');
 
 beforeAll(function(done) {

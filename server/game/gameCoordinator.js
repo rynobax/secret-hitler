@@ -46,41 +46,47 @@ function getExistingGame(socket){
 const listen = function(_io, socket) {
 	io = _io;
 	// NEW GAME
-	socket.on('newGameRequest', () => {
+	socket.on('newGameRequest', (ack) => {
     // Get a unique code and send to the client
     let game = getExistingGame(socket);
     if(game === undefined){
       game = addGame(socket);
     }
-    socket.emit('newGameResponse', {success: true, state: game.getState()});
+    ack({success: true, state: game.getState()});
   });
 
 	// JOIN GAME
-  socket.on('joinGameRequest', res => {
+  socket.on('joinGameRequest', (res, ack) => {
 		const code = res.code;
 		const name = res.name;
 		const game = getGame(code);
 
 		if(game == undefined){
-			socket.emit('joinGameResponse', {result: 'dne'});
+      ack({result: 'dne'});
 			return;
 		}
 
     const existingPlayer = _.find(game.players, ['name', name]);
 		if(!!existingPlayer){
       if(existingPlayer.socket.connected){
-        socket.emit('joinGameResponse', {result: 'repeatName'});
+        ack({result: 'repeatName'});
       }else{
-        socket.emit('joinGameResponse', {result: 'success', state: game.getState()});
+        ack({result: 'success', state: game.getState()});
       }
 		}else{
       let response = '';
       if(game.addPlayer(name, socket)){
-        socket.emit('joinGameResponse', {result: 'success', state: game.getState()});
+        ack({result: 'success', state: game.getState()});
       }else{
-        socket.emit('joinGameResponse', {result: 'full'});
+        ack({result: 'full'});
       }
     }
   });
 }
 module.exports.listen = listen;
+module.exports = {
+  listen: listen,
+  addGame: addGame,
+  games: games,
+  getGame: getGame
+}

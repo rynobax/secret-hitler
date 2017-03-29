@@ -42,6 +42,12 @@ secretHitlerApp.controller('gameController', function($scope, $state, sessionSer
 			case 'voteResult':
 				$state.transitionTo('game.idle', {}, {reload: true});
 				break;
+			case 'presidentChooseCard':
+				handlePresidentChooseCard(newState, sessionService.me)
+				break;
+			case 'chancellorChooseCard':
+				handleChancellorChooseCard(newState, sessionService.me)
+				break;
 			default:
 				console.log('Unknown newState: ', newState.mode.name);
 				break;
@@ -49,7 +55,23 @@ secretHitlerApp.controller('gameController', function($scope, $state, sessionSer
 	}
 
 	function handleChooseChancellor(state, me){
-		if(me.name == state.mode.data.president){
+		if(me.name == state.president){
+			$state.transitionTo('game.chooseOne', {}, {reload: true});
+		}else{
+			$state.transitionTo('game.idle', {}, {reload: true});
+		}
+	}
+
+	function handlePresidentChooseCard(state, me){
+		if(me.name == state.president){
+			$state.transitionTo('game.chooseOne', {}, {reload: true});
+		}else{
+			$state.transitionTo('game.idle', {}, {reload: true});
+		}
+	}
+
+	function handleChancellorChooseCard(state, me){
+		if(me.name == state.chancellor){
 			$state.transitionTo('game.chooseOne', {}, {reload: true});
 		}else{
 			$state.transitionTo('game.idle', {}, {reload: true});
