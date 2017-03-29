@@ -54,7 +54,7 @@ module.exports = function(_code, _socket, _io){
 			case 4:
 			case 5:
 			case 6:
-				abilities = [null, null, 'examine', 'kill', 'kill', null];
+				abilities = ['examine', null, 'examine', 'kill', 'kill', null];
 				break;
 			case 7:
 			case 8:
@@ -100,14 +100,17 @@ module.exports = function(_code, _socket, _io){
 		return drawPile.splice(0, n);
 	}
 
+	let phase = {name: 'lobby'};
 	/* Create the state object sent to the clients */
-	function getState(phase){
+	function getState(_phase){
+		if(_phase) phase = _phase;
 		return {
 			players: players.map(e => {
 				return {
 					name: e.name,
 					role: e.role,
-					alive: e.alive
+					alive: e.alive,
+					awaitingVote: e.awaitingVote
 				}
 			}
 			),
@@ -159,6 +162,8 @@ module.exports = function(_code, _socket, _io){
 		shuffleIfNecessary();
 		legislate()
 			.then((policyEnacted) => {
+				console.log('policyEnacted: ', policyEnacted);
+
 				if(policyEnacted){
 					// If liberals have enough policies, they win
 					if(getLiberalEnactedCount() == liberalPoliciesToWin){
@@ -184,6 +189,7 @@ module.exports = function(_code, _socket, _io){
 					const lastPolicyEnacted = enacted.slice(-1)[0];
 					if(lastPolicyEnacted == 'Fascist'){
 						const ability = getPresidentialAbility();
+						console.log('ability: ', ability);
 						switch(ability){
 							case null:
 								return;
@@ -302,6 +308,7 @@ module.exports = function(_code, _socket, _io){
 				return notifyVoteResult(votePassed);
 			})
 			.then((votePassed) => {
+				console.log('votePassed: ', votePassed);
 				if(votePassed){
 					failedElectionCount = 0;
 					return enactPolicy();
@@ -329,7 +336,7 @@ module.exports = function(_code, _socket, _io){
 			name: 'chooseChancellor'
 		});
 		return new Promise((resolve, reject) => {
-			findPlayer(president).socket.on('chooseChancellorResponse', (chancellor) => {
+			findPlayer(president).socket.once('chooseChancellorResponse', (chancellor) => {
 				resolve(chancellor);
 			});
 		});
@@ -337,6 +344,7 @@ module.exports = function(_code, _socket, _io){
 
 	// Resolves result of overall vote (true or false)
 	function voteOnChancellor(nominatedChancellor){
+		players.forEach((player) => player.awaitingVote = true);
 		emitState({
 			name: 'voteChancellor',
 			nominatedChancellor: nominatedChancellor
@@ -379,6 +387,7 @@ module.exports = function(_code, _socket, _io){
 	function getChancellorVote(player){
 		return new Promise((resolve, reject) => {
 			player.socket.once('voteChancellorResponse', (response) => {
+				player.awaitingVote = false;
 				resolve(response);
 			});
 		});
@@ -389,15 +398,16 @@ module.exports = function(_code, _socket, _io){
 	function enactPolicy(){
 		return new Promise((resolve, reject) => {
 			const cards = drawCards(3);
-			givePresidentCards(cards)
+			presidentChooseCard(cards)
 				.then(removed => {
 					discardPile.push(removed);
-					cards.splice(_.findIndex(removed), 1);
-					return giveChancellorCards(cards);
+					cards.splice(cards.findIndex((e) => e == removed), 1);
+					return chancellorChooseCard(cards);
 				})
 				.then(enact => {
 					// TODO: Add support for vetoing
-					if(enact == null){
+					console.log('enact: ', enact);
+					if(enact == false){
 						// It was vetoed
 						cards.forEach((card) => {
 							discardPile.push(card);
@@ -415,26 +425,27 @@ module.exports = function(_code, _socket, _io){
 	}
 
 	// Resolves the card REMOVED ('Fascist' or 'Liberal')
-	function givePresidentCards(cards){
+	function presidentChooseCard(cards){
 		emitState({
 			name: 'presidentChooseCard',
 			cards: cards
 		});
 		return new Promise((resolve, reject) => {
-			findPlayer(president).socket.on('presidentChooseCardResponse', (discard) => {
+			findPlayer(president).socket.once('presidentChooseCardResponse', (discard) => {
 				resolve(discard);
 			});
 		});
 	}
 
 	// Resolves the card ENACTED ('Fascist' or 'Liberal') OR null if choices are vetoed
-	function giveChancellorCards(cards){
+	function chancellorChooseCard(cards){
 		emitState({
-			name: 'giveChancellorCards',
+			name: 'chancellorChooseCard',
 			cards: cards
 		});
 		return new Promise((resolve, reject) => {
-			findPlayer(chancellor).socket.on('chancellorChooseCardResponse', (enact) => {
+			findPlayer(chancellor).socket.once('chancellorChooseCardResponse', (enact) => {
+				console.log('enact: ', enact);
 				resolve(enact);
 			});
 		});

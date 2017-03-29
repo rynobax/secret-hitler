@@ -1,0 +1,12 @@
+<div class="text-center">
+  <h2>Choose a card to discard!</h2>
+</div>
+<div>
+  <div ng-repeat="card in cards track by $index">
+    <button 
+      class="btn btn-default" 
+      ng-click="chooseCard(card)">
+      {{card}}
+    </button>
+  </div>
+</div>

@@ -3,6 +3,7 @@ module.exports = function(name, socket){
     name: name,
 		socket: socket,
     role: '',
-    alive: true
+    alive: true,
+    awaitingVote: false
   }
 }

@@ -57,9 +57,19 @@ secretHitlerApp.config(function($stateProvider, $locationProvider) {
 		templateUrl: '/app/components/player/game/idle/idle.html'
 	})
   .state({
-		name: 'game.chooseOne',
-		controller: 'chooseOneController',
-		templateUrl: '/app/components/player/game/chooseOne/chooseOne.html'
+		name: 'game.chancellorChooseCard',
+		controller: 'chancellorChooseCardController',
+		templateUrl: '/app/components/player/game/chancellorChooseCard/chancellorChooseCard.html'
+	})
+  .state({
+		name: 'game.chooseChancellor',
+		controller: 'chooseChancellorController',
+		templateUrl: '/app/components/player/game/chooseChancellor/chooseChancellor.html'
+	})
+  .state({
+		name: 'game.presidentChooseCard',
+		controller: 'presidentChooseCardController',
+		templateUrl: '/app/components/player/game/presidentChooseCard/presidentChooseCard.html'
 	})
   .state({
 		name: 'game.showRoles',

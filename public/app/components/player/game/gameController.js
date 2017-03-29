@@ -26,7 +26,10 @@ secretHitlerApp.controller('gameController', function($scope, $state, sessionSer
 		sessionService.me = newState.players.find(e => {
 			return e.name == sessionService.name;
 		});
-		switch(newState.mode.name){
+
+		const phaseName = newState.phase.name;
+		console.log('phaseName: ', phaseName);
+		switch(phaseName){
 			case 'lobby':
 				$state.transitionTo('game.awaitStart', {}, {reload: true});
 				break;
@@ -48,15 +51,18 @@ secretHitlerApp.controller('gameController', function($scope, $state, sessionSer
 			case 'chancellorChooseCard':
 				handleChancellorChooseCard(newState, sessionService.me)
 				break;
+			case 'examineCards':
+				handleExamineCards(newState, sessionService.me)
+				break;
 			default:
-				console.log('Unknown newState: ', newState.mode.name);
+				console.log('Unknown newState: ', phaseName);
 				break;
 		}
 	}
 
 	function handleChooseChancellor(state, me){
 		if(me.name == state.president){
-			$state.transitionTo('game.chooseOne', {}, {reload: true});
+			$state.transitionTo('game.chooseChancellor', {}, {reload: true});
 		}else{
 			$state.transitionTo('game.idle', {}, {reload: true});
 		}
@@ -64,7 +70,7 @@ secretHitlerApp.controller('gameController', function($scope, $state, sessionSer
 
 	function handlePresidentChooseCard(state, me){
 		if(me.name == state.president){
-			$state.transitionTo('game.chooseOne', {}, {reload: true});
+			$state.transitionTo('game.presidentChooseCard', {}, {reload: true});
 		}else{
 			$state.transitionTo('game.idle', {}, {reload: true});
 		}
@@ -72,7 +78,16 @@ secretHitlerApp.controller('gameController', function($scope, $state, sessionSer
 
 	function handleChancellorChooseCard(state, me){
 		if(me.name == state.chancellor){
-			$state.transitionTo('game.chooseOne', {}, {reload: true});
+			$state.transitionTo('game.chancellorChooseCard', {}, {reload: true});
+		}else{
+			$state.transitionTo('game.idle', {}, {reload: true});
+		}
+	}
+
+	function handleExamineCards(state, me){
+		if(me.name == state.president){
+			// TODO: Implement this screen
+			$state.transitionTo('game.examineCards', {}, {reload: true});
 		}else{
 			$state.transitionTo('game.idle', {}, {reload: true});
 		}

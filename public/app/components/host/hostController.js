@@ -19,7 +19,8 @@ secretHitlerApp.controller('hostController', function($scope, $state, sessionSer
 			return e.name == sessionService.name;
 		});
 
-		switch(newState.mode.name){
+		const phaseName = newState.phase.name;
+		switch(phaseName){
 			case 'lobby':
 				$state.transitionTo('host.lobby', {}, {reload: true});
 				break;
@@ -30,7 +31,7 @@ secretHitlerApp.controller('hostController', function($scope, $state, sessionSer
 				$state.transitionTo('host.board', {}, {reload: true});
 				break;
 			default:
-				console.log('Unknown newState: ', newState.mode.name);
+				console.log('Unknown newState: ', phaseName);
 				break;
 		}
 	}

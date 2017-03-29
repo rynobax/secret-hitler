@@ -2,7 +2,7 @@ secretHitlerApp.controller('awaitStartController', function($scope, sessionServi
 	$scope.canStartGame = false;
 
 	try{
-		$scope.canStartGame = sessionService.state.mode.data.ready;
+		$scope.canStartGame = sessionService.state.phase.ready;
 	}catch(e){
 		console.log('Error: ', e);
 	}
