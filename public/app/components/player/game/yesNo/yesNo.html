@@ -1,7 +1,7 @@
 <div class="text-center">
   <h2>{{header}}</h2>
 </div>
-<div class="container-fluid">
+<div class="container-fluid mx-auto">
   <!-- Before voting -->
   <div class="btn-group btn-group-justified" ng-show="!voted">
     <div class="btn-group" role="group">
@@ -17,7 +17,7 @@
   </div>
 
   <!-- After voting -->
-  <div class="btn-group btn-group-justified" ng-show="voted">
+  <div class="btn-group btn-group-justified text-center" ng-show="voted">
     Thank you for voting!
   </div>
 </div>

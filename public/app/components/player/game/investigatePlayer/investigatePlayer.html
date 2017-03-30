@@ -1,0 +1,27 @@
+<div ng-show="!investigating">
+  <div class="text-center">
+    <h2>Choose a player to investigate!</h2>
+  </div>
+  <div>
+    <div ng-repeat="player in players track by $index">
+      <button 
+        class="btn btn-default" 
+        ng-click="investigate(player)">
+        {{player}}
+      </button>
+    </div>
+  </div>
+</div>
+<div ng-show="investigating">
+  <div class="text-center">
+    <h2>{{investigatedPlayerName}}</h2>
+  </div>
+  <div>
+    Role: {{investigatedPlayerRole}}
+    <button 
+      class="btn btn-default" 
+      ng-click="done()">
+      Finished
+    </button>
+  </div>
+</div>

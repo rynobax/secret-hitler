@@ -15,14 +15,14 @@
 
 <role-modal></role-modal>
 
-<div class='myHeader container-fluid'>
+<div class='myHeader container mx-auto'>
   <div class="row">
-    <div class="col-xs-2">
+    <div class="col">
     </div>
-    <div class="col-xs-8 text-center">
+    <div class="col-8 text-center">
       <h1 id="header">{{name}}</h1>
     </div>
-    <div class="col-xs-2">
+    <div class="col">
       <button 
         id="infoButton" 
         type="button" 
@@ -35,6 +35,5 @@
       </button>
     </div>
   </div>
+  <ui-view></ui-view>
 </div>
-
-<ui-view></ui-view>

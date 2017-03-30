@@ -27,6 +27,11 @@ secretHitlerApp.controller('gameController', function($scope, $state, sessionSer
 			return e.name == sessionService.name;
 		});
 
+		if(!sessionService.me.alive){
+			$state.transitionTo('game.idle', {}, {reload: true});
+			return;
+		}
+
 		const phaseName = newState.phase.name;
 		console.log('phaseName: ', phaseName);
 		switch(phaseName){
@@ -53,6 +58,15 @@ secretHitlerApp.controller('gameController', function($scope, $state, sessionSer
 				break;
 			case 'examineCards':
 				handleExamineCards(newState, sessionService.me)
+				break;
+			case 'killPlayer':
+				handleKillPlayer(newState, sessionService.me)
+				break;
+			case 'pickNextPresident':
+				handlePickNextPresident(newState, sessionService.me)
+				break;
+			case 'investigatePlayer':
+				handleInvestigatePlayer(newState, sessionService.me)
 				break;
 			default:
 				console.log('Unknown newState: ', phaseName);
@@ -86,8 +100,31 @@ secretHitlerApp.controller('gameController', function($scope, $state, sessionSer
 
 	function handleExamineCards(state, me){
 		if(me.name == state.president){
-			// TODO: Implement this screen
 			$state.transitionTo('game.examineCards', {}, {reload: true});
+		}else{
+			$state.transitionTo('game.idle', {}, {reload: true});
+		}
+	}
+
+	function handleKillPlayer(state, me){
+		if(me.name == state.president){
+			$state.transitionTo('game.killPlayer', {}, {reload: true});
+		}else{
+			$state.transitionTo('game.idle', {}, {reload: true});
+		}
+	}
+
+	function handlePickNextPresident(state, me){
+		if(me.name == state.president){
+			$state.transitionTo('game.pickNextPresident', {}, {reload: true});
+		}else{
+			$state.transitionTo('game.idle', {}, {reload: true});
+		}
+	}
+
+	function handleInvestigatePlayer(state, me){
+		if(me.name == state.president){
+			$state.transitionTo('game.investigatePlayer', {}, {reload: true});
 		}else{
 			$state.transitionTo('game.idle', {}, {reload: true});
 		}

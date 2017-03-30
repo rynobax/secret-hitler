@@ -1,0 +1,12 @@
+<div class="text-center">
+  <h2>Choose a player to kill!</h2>
+</div>
+<div>
+  <div ng-repeat="player in players track by $index">
+    <button 
+      class="btn btn-default" 
+      ng-click="kill(player)">
+      {{player}}
+    </button>
+  </div>
+</div>

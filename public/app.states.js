@@ -45,40 +45,60 @@ secretHitlerApp.config(function($stateProvider, $locationProvider) {
     controller: 'gameController',
     templateUrl: '/app/components/player/game/game.html',
 		abstract: true
-  })
-	.state({
+  });
+	$stateProvider.state({
 		name: 'game.awaitStart',
 		controller: 'awaitStartController',
 		templateUrl: '/app/components/player/game/awaitStart/awaitStart.html'
-	})
-	.state({
+	});
+	$stateProvider.state({
 		name: 'game.idle',
 		controller: 'idleController',
 		templateUrl: '/app/components/player/game/idle/idle.html'
-	})
-  .state({
+	});
+  $stateProvider.state({
 		name: 'game.chancellorChooseCard',
 		controller: 'chancellorChooseCardController',
 		templateUrl: '/app/components/player/game/chancellorChooseCard/chancellorChooseCard.html'
-	})
-  .state({
+	});
+  $stateProvider.state({
 		name: 'game.chooseChancellor',
 		controller: 'chooseChancellorController',
 		templateUrl: '/app/components/player/game/chooseChancellor/chooseChancellor.html'
-	})
-  .state({
+	});
+  $stateProvider.state({
 		name: 'game.presidentChooseCard',
 		controller: 'presidentChooseCardController',
 		templateUrl: '/app/components/player/game/presidentChooseCard/presidentChooseCard.html'
-	})
-  .state({
+	});
+  $stateProvider.state({
+		name: 'game.examineCards',
+		controller: 'examineCardsController',
+		templateUrl: '/app/components/player/game/examineCards/examineCards.html'
+	});
+  $stateProvider.state({
 		name: 'game.showRoles',
 		controller: 'showRolesController',
 		templateUrl: '/app/components/player/game/showRoles/showRoles.html'
-	})
-  .state({
+	});
+  $stateProvider.state({
 		name: 'game.voteChancellor',
 		controller: 'yesNoController',
 		templateUrl: '/app/components/player/game/yesNo/yesNo.html'
-	})
+	});
+  $stateProvider.state({
+		name: 'game.killPlayer',
+		controller: 'killPlayerController',
+		templateUrl: '/app/components/player/game/killPlayer/killPlayer.html'
+	});
+  $stateProvider.state({
+		name: 'game.pickNextPresident',
+		controller: 'pickNextPresidentController',
+		templateUrl: '/app/components/player/game/pickNextPresident/pickNextPresident.html'
+	});
+  $stateProvider.state({
+		name: 'game.investigatePlayer',
+		controller: 'investigatePlayerController',
+		templateUrl: '/app/components/player/game/investigatePlayer/investigatePlayer.html'
+	});
 });

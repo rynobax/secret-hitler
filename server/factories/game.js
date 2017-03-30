@@ -11,6 +11,7 @@ module.exports = function(_code, _socket, _io){
 	 * 	Socket socket
 	 * 	string role
 	 * 	bool	 alive
+	 *  awaitingVote
 	 */
 	let players = [];
 
@@ -41,6 +42,7 @@ module.exports = function(_code, _socket, _io){
 
 	/* Ability */
 	let specialPresidentRound = false;
+	let lastRoundVotePassed = false;
 
 	/* Presidential Abilities */
 	function getPresidentialAbility(){
@@ -54,7 +56,7 @@ module.exports = function(_code, _socket, _io){
 			case 4:
 			case 5:
 			case 6:
-				abilities = ['examine', null, 'examine', 'kill', 'kill', null];
+				abilities = [null, null, 'examine', 'kill', 'kill', null];
 				break;
 			case 7:
 			case 8:
@@ -162,7 +164,10 @@ module.exports = function(_code, _socket, _io){
 		shuffleIfNecessary();
 		legislate()
 			.then((policyEnacted) => {
-				console.log('policyEnacted: ', policyEnacted);
+				// Hitler was elected past the threshold
+				if(policyEnacted == 'HitlerElected'){
+					return 'Fascist';
+				}
 
 				if(policyEnacted){
 					// If liberals have enough policies, they win
@@ -173,16 +178,6 @@ module.exports = function(_code, _socket, _io){
 					// If fascists have enough policies, they win
 					if(getFascistEnactedCount() == fascistPoliciesToWin){
 						return 'Fascist';
-					}
-
-					// If Hitler is chancellor and enough fascist policies, the game ends
-					if(hitlerCanWin && findPlayer(chancellor).role == 'Hitler'){
-						return 'Fascist';
-					}
-
-					// If enough facist policies are enacted, hitler can win by being elected chancellor
-					if(getFascistEnactedCount() == fascistHitlerThreshold){
-						hitlerCanWin = true;
 					}
 
 					// If a fascist was enacted and a power needs to be used, use it
@@ -231,7 +226,7 @@ module.exports = function(_code, _socket, _io){
 				name: 'examineCards',
 				cards: cards
 			});
-			findPlayer(president).once('examineCardsResponse', () => {
+			findPlayer(president).socket.once('examineCardsResponse', () => {
 				resolve(false);
 			});
 		});
@@ -243,7 +238,7 @@ module.exports = function(_code, _socket, _io){
 			emitState({
 				name: 'killPlayer'
 			});
-			findPlayer(president).once('killPlayerResponse', (player) => {
+			findPlayer(president).socket.once('killPlayerResponse', (player) => {
 				if(player.role == 'Hitler'){
 					// Hitler was killed, so the game ends
 					resolve('Liberal');
@@ -262,7 +257,7 @@ module.exports = function(_code, _socket, _io){
 			emitState({
 				name: 'investigatePlayer'
 			});
-			findPlayer(president).once('investigatePlayerResponse', (player) => {
+			findPlayer(president).socket.once('investigatePlayerResponse', (player) => {
 				resolve(false);
 			});
 		});
@@ -275,7 +270,7 @@ module.exports = function(_code, _socket, _io){
 			emitState({
 				name: 'pickNextPresident'
 			});
-			findPlayer(president).once('pickNextPresidentResponse', (player) => {
+			findPlayer(president).socket.once('pickNextPresidentResponse', (player) => {
 				president = player;
 				resolve(false);
 			});
@@ -308,10 +303,15 @@ module.exports = function(_code, _socket, _io){
 				return notifyVoteResult(votePassed);
 			})
 			.then((votePassed) => {
-				console.log('votePassed: ', votePassed);
+				lastRoundVotePassed = votePassed;
 				if(votePassed){
 					failedElectionCount = 0;
-					return enactPolicy();
+					// If enough facist policies are enacted, hitler can win by being elected chancellor
+					if(getFascistEnactedCount() >= fascistHitlerThreshold && findPlayer(chancellor).role == 'Hitler'){
+						resolve('HitlerElected');
+					}else{
+						return enactPolicy();
+					}
 				}else{
 					failedElectionCount++;
 					if(failedElectionCount > 3){
@@ -350,7 +350,10 @@ module.exports = function(_code, _socket, _io){
 			nominatedChancellor: nominatedChancellor
 		});
 		return new Promise((resolve, reject) => {
-			Promise.all(players.map(player => getChancellorVote(player)))
+			Promise.all(
+				players
+				.filter(player => player.alive)
+				.map(player => getChancellorVote(player)))
 				.then(res => {
 					return res.reduce((a, e) => {
 						if(e === true){
@@ -469,9 +472,9 @@ module.exports = function(_code, _socket, _io){
 		players = _.shuffle(players);
 	}
 
-	function setNextPresident(votePassed){
+	function setNextPresident(){
 		players.push(players.shift());
-		if(votePassed){
+		if(lastRoundVotePassed){
 			lastChancellor = chancellor;
 			lastPresident = president;
 		}

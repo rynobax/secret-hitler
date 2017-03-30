@@ -8,10 +8,19 @@ secretHitlerApp.controller('idleController', function($scope, sessionService) {
 			$scope.idleText = '';
 			break;
 		case 'presidentChooseCard':
-			$scope.idleText = '';
+			$scope.idleText = 'Wait for the president to choose a card to discard.';
 			break;
 		case 'chancellorChooseCard':
-			$scope.idleText = '';
+			$scope.idleText = 'Wait for the chancellor to choose a card to enact.';
+			break;
+		case 'examineCards':
+			$scope.idleText = 'Wait for the president to examine the next 3 cards.';
+			break;
+		case 'killPlayer':
+			$scope.idleText = 'Wait for the president to kill someone.';
+			break;
+		case 'investigatePlayer':
+			$scope.idleText = 'Wait for the president to investigate a player\'s party affiliation.';
 			break;
 		default:
 			$scope.idleText = 'Unknown phaseName ' + phaseName;

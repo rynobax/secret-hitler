@@ -1,0 +1,16 @@
+<div class="text-center">
+  <h2>The next 3 cards:</h2>
+  <div>
+    <div ng-repeat="card in cards track by $index">
+      <button 
+        class="btn btn-default">
+        {{card}}
+      </button>
+    </div>
+    <button 
+      class="btn btn-success"
+      ng-click="done()">
+      Done
+    </button>
+  </div>
+</div>
