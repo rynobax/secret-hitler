@@ -4,8 +4,8 @@
   "description": "A web application for playing secret hitler",
   "main": "index.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js",
+    "start": "node app.js 80",
+    "dev": "nodemon app.js 80",
     "test-client": "protractor tests/client/conf.js",
     "test-server": "mocha tests/server/testrunner.js",
     "webdriver": "webdriver-manager start"
@@ -32,7 +32,12 @@
     "socket.io": "^1.7.2"
   },
   "devDependencies": {
+    "babel-cli": "^6.24.0",
+    "babel-preset-es2015": "^6.24.0",
     "chai": "^3.5.0",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
     "mocha": "^3.2.0"
   }
 }

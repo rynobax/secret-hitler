@@ -16,13 +16,13 @@ secretHitlerApp.config(function($stateProvider, $locationProvider) {
     templateUrl: '/app/components/host/host.html',
 		abstract: true
   })
-		.state({
+	$stateProvider.state({
 	    name: 'host.lobby',
 	    controller: 'lobbyController',
 	    templateUrl: '/app/components/host/lobby/lobby.html'
-  	})
-		.state({
-			name: 'host.board',
+  	});
+	$stateProvider.state({
+			name: 'board',
 			controller: 'boardController',
 			templateUrl: '/app/components/host/board/board.html'
 		});
@@ -100,5 +100,10 @@ secretHitlerApp.config(function($stateProvider, $locationProvider) {
 		name: 'game.investigatePlayer',
 		controller: 'investigatePlayerController',
 		templateUrl: '/app/components/player/game/investigatePlayer/investigatePlayer.html'
+	});
+  $stateProvider.state({
+		name: 'test',
+		url: '/test',
+		templateUrl: '/test.html'
 	});
 });

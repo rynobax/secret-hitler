@@ -24,14 +24,8 @@ secretHitlerApp.controller('hostController', function($scope, $state, sessionSer
 			case 'lobby':
 				$state.transitionTo('host.lobby', {}, {reload: true});
 				break;
-			case 'legislation':
-				$state.transitionTo('host.board', {}, {reload: true});
-				break;
-			case 'legislation':
-				$state.transitionTo('host.board', {}, {reload: true});
-				break;
 			default:
-				console.log('Unknown newState: ', phaseName);
+				$state.transitionTo('board', {}, {reload: true});
 				break;
 		}
 	}

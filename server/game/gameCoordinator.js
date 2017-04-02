@@ -57,6 +57,7 @@ const listen = function(_io, socket) {
 
 	// JOIN GAME
   socket.on('joinGameRequest', (res, ack) => {
+    console.log('joinGameRequest');
 		const code = res.code;
 		const name = res.name;
 		const game = getGame(code);

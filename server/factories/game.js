@@ -121,7 +121,8 @@ module.exports = function(_code, _socket, _io){
 			president: president,
 			chancellor: chancellor,
 			lastChancellor: lastChancellor,
-			lastPresident: lastPresident
+			lastPresident: lastPresident,
+			code: code
 		}
 	}
 
@@ -388,6 +389,7 @@ module.exports = function(_code, _socket, _io){
 	}
 
 	function getChancellorVote(player){
+		console.log('got vote from ' + player.name);
 		return new Promise((resolve, reject) => {
 			player.socket.once('voteChancellorResponse', (response) => {
 				player.awaitingVote = false;
