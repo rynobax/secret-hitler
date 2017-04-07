@@ -1,4 +1,8 @@
 secretHitlerApp.controller('idleController', function($scope, sessionService) {
+	if(!$scope.me.alive){
+		$scope.idleText = 'You are dead!';
+		return;
+	}
 	const phaseName = sessionService.state.phase.name;
 	switch(phaseName){
 		case 'chooseChancellor':

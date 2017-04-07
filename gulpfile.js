@@ -1,9 +1,17 @@
 const gulp = require('gulp');
 const babel = require('gulp-babel');
 const del = require('del');
+const gulpSequence = require('gulp-sequence')
+//const server = require('./server.js');
 
-gulp.task('clean', () => {
-  return del(['./public/**/*']);
+gulp.task('clean', (done) => {
+  del(['./public/**/*']);
+  done();
+});
+
+gulp.task('other', () => {
+    return gulp.src(['./src/**/*', '!./src/**/*.js'])
+        .pipe(gulp.dest('./public'));
 });
 
 gulp.task('js', () => {
@@ -14,23 +22,18 @@ gulp.task('js', () => {
         .pipe(gulp.dest('./public'));
 });
 
-gulp.task('other', () => {
-    return gulp.src(['./src/**/*', '!./src/**/*.js'])
-        .pipe(gulp.dest('./public'));
+gulp.task('rebuild', (done) => gulpSequence('clean', 'other', 'js')(done));
+
+gulp.task('run', ['rebuild'], () => {
+    require('./server.js').start(80);
 });
 
-gulp.task('rebuild', ['clean'], () => {
-    return gulp.task('build', ['js', 'other'])
-})
-
-gulp.task('watch', () => {
-    gulp.watch('./src/**/*', ['rebuild']);
+gulp.task('watch', ['run'], () => {
+    gulp.watch('./src/**/*', ['run']);
 })
 
 gulp.task('default', ['watch']);
 
-gulp.task('run', ['rebuild'], () => {
-    const server = require('./server.js');
-    const args = process.argv.slice(2);
-    server.start(args[0]); 
-})
+gulp.task('start-dev', ['watch']);
+
+gulp.task('start', ['run']);

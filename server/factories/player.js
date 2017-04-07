@@ -4,6 +4,7 @@ module.exports = function(name, socket){
 		socket: socket,
     role: '',
     alive: true,
-    awaitingVote: false
+    awaitingVote: false,
+    vote: ''
   }
 }

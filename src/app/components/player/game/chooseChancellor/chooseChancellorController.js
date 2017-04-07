@@ -7,10 +7,6 @@ secretHitlerApp.controller('chooseChancellorController', function($scope, $state
     $scope.players = players
         .filter(player => {
             const name = player.name;
-            console.log('player: ', player);
-            console.log('president: ', president);
-            console.log('lastPresident: ', lastPresident);
-            console.log('lastChancellor: ', lastChancellor);
             if(name == president || name == lastPresident || name == lastChancellor) return false;
             return player.alive;
         })

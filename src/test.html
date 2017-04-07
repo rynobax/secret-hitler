@@ -1,21 +1,117 @@
 <style>
+.wrapper, html, body {
+  height:100%;
+  margin:0;
+}
+#main {
+  height:100%;
+  margin:0;
+}
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
 .myHeader
 {
-    background-color: #Aba6cb;
-    margin: 0px;
-    padding: 0px;
-    height: 80px;
+  background-color: #E3DEDB;
+}
+#board
+{
+  background-color: #b69b4c;
+  display: flex;
+  flex-direction: column;
+  height:100%;
+  width:100%;
+}
+#boardMain
+{
+   flex: 5;
+  display: flex;
+  flex-direction: row;
+}
+#boardFooter
+{
+  flex: 1;
+  background-color: #99823e;
+  display: flex;
+  flex-direction: row;
+}
+#playerBox
+{
+  flex: 1;
+  padding: 12px;
+  border: solid 1px #e7e7e7;
+}
+#partyBoards
+{
+  flex: 7;
+  border: solid 1px #e7e7e7;
+  display: flex;
+  flex-direction: column;
+}
+#failedElectionTracker
+{
+  flex: 1;
+  border: solid 1px #e7e7e7;
+}
+#stateInfo
+{
+  border: solid 1px #e7e7e7;
+  flex: 4;
+}
+#liberalBoard
+{
+  border: solid 1px #e7e7e7;
+  flex: 1;
+}
+#fascistBoard
+{
+  border: solid 1px #e7e7e7;
+  flex: 1;
 }
 </style>
-<div class='myHeader container-fluid mx-auto'>
-  <div class="row">
-    <div class="col text-center">
-      <h1 id="header">CODE</h1>
+<div class="wrapper">
+  <div class='myHeader'>
+    <div class="row">
+      <div class="col text-center">
+        <h1 id="header">CODE</h1>
+      </div>
+      <div class="col-10 text-center">
+        <h1 id="header">Secret Hitler</h1>
+      </div>
+      <div class="col">
+      </div>
     </div>
-    <div class="col-10 text-center">
-      <h1 id="header">Secret Hitler</h1>
+  </div>
+  <div id="board">
+    <div id="boardMain">
+      <!-- Contains Faction boards, election ticker -->
+      <div id="partyBoards">
+        <div id="liberalBoard">
+          Liberal Board
+        </div>
+        <div id="fascistBoard">
+          Fascist Board
+        </div>
+      </div>
+      <div id="failedElectionTracker">
+        failedElectionTracker
+      </div>
+      <div id="stateInfo">
+        stateInfo
+      </div>
     </div>
-    <div class="col">
+    <div id="boardFooter">
+      <!-- Contains a column for each player that shows players status -->
+      <div id="playerBox">
+        1
+      </div>
+      <div id="playerBox">
+        2
+      </div>
+      <div id="playerBox">
+        3
+      </div>
     </div>
   </div>
 </div>

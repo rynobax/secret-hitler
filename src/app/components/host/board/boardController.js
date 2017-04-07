@@ -1,19 +1,43 @@
 secretHitlerApp.controller('boardController', function($scope, $state, sessionService) {
-  $scope.code = sessionService.state.code;
+  assignScopeFromState(sessionService.state);
 
-  $scope.players = sessionService.state.players.map(e => e.name);
-  const phase = sessionService.state.phase;
-  $scope.president = phase.president;
-  $scope.chancellor = phase.chancellor;
-  $scope.lastPresident = phase.lastPresident;
-  $scope.lastChancellor = phase.lastChancellor;
+  $scope.getFailedElection = function(){
+    return new Array($scope.failedElectionThreshold);
+  }
+
+  $scope.getLiberalTiles = function(){
+    return new Array($scope.liberalNeeded);
+  }
+
+  $scope.getFascistTiles = function(){
+    return $scope.abilities;
+  }
+
+  function assignScopeFromState(state){
+    $scope.state = state; //Just for testing
+
+    $scope.code = sessionService.state.code;
+    $scope.players = state.players;
+    // $scope.phase = state.phase;
+    $scope.president = state.president;
+    $scope.chancellor = state.chancellor;
+    $scope.lastPresident = state.lastPresident;
+    $scope.lastChancellor = state.lastChancellor;
+    $scope.liberalEnacted = state.liberalEnacted;
+    $scope.liberalNeeded = state.liberalNeeded;
+    $scope.fascistEnacted = state.fascistEnacted;
+    $scope.fascistNeeded = state.fascistNeeded;
+    $scope.fascistHitlerThreshold = state.fascistHitlerThreshold;
+    $scope.failedElectionCount = state.failedElectionCount;
+    $scope.failedElectionThreshold = state.failedElectionThreshold;
+    $scope.abilities = state.abilities.map(e => {
+      if(!e) return e;
+      return e.charAt(0).toUpperCase() + e.slice(1);
+    });
+  }
 
   socket.on('state', state => {
-    $scope.players = state.players.map(e => e.name);
-    $scope.president = state.phase.president;
-    $scope.chancellor = state.phase.chancellor;
-    $scope.lastPresident = state.phase.lastPresident;
-    $scope.lastChancellor = state.phase.lastChancellor;
+    assignScopeFromState(state);
 
     handlePhase(state);
     $scope.$apply();
@@ -22,7 +46,7 @@ secretHitlerApp.controller('boardController', function($scope, $state, sessionSe
   function handlePhase(state){
     switch(state.phase.name){
       default:
-        console.log(state.phase.name);
+        $scope.phaseName = state.phase.name;
         break;
     }
   }

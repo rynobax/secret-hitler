@@ -1,0 +1,196 @@
+/* Whole screen */
+.wrapper, html, body {
+  height:100%;
+  margin:0;
+}
+#main {
+  height:100%;
+  margin:0;
+}
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.myHeader
+{
+  background-color: #E3DEDB;
+}
+
+/* Whole board */
+#board
+{
+  background-color: #b69b4c;
+  display: flex;
+  flex-direction: column;
+  height:100%;
+  width:100%;
+}
+
+/* Middle Area */
+#boardMain
+{
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+}
+
+/* Footer (Player Boxes) */
+#boardFooter
+{
+  flex: 1;
+  background-color: #99823e;
+  display: flex;
+  flex-direction: row;
+}
+
+/* Player box */
+.playerBox
+{
+  flex: 1;
+  border: solid 1px #e7e7e7;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+.electedPosition
+{
+  flex: 0 0 33%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+.president
+{
+  background-color: gold;
+  margin: 0;
+  padding: 0;
+}
+.chancellor
+{
+  background-color: silver;
+}
+.playerInfo
+{
+  flex: 0 0 33%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+.voteArea
+{
+  flex: 0 0 33%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+.awaitingVote
+{
+  background-color: lightgray;
+}
+.voteYes
+{
+  background-color: lightgreen;
+}
+.voteNo
+{
+  background-color: lightcoral;
+}
+
+/* Big 3 in middle layer 714*/
+#partyBoards
+{
+  flex: 0 0 60%;
+  border: solid 1px #e7e7e7;
+  display: flex;
+  flex-direction: column;
+}
+#failedElectionTracker
+{
+  flex: 0 0 10%;
+  border: solid 1px #e7e7e7;
+  display: flex;
+  flex-direction: column;
+}
+#stateInfo
+{
+  flex: 0 0 30%;
+  border: solid 1px #e7e7e7;
+  width: 30%;
+}
+
+/* Failed election */
+.failedElectionSlot
+{
+  flex: 1;
+  margin: 25%;
+  background: lightslategray;
+}
+
+.failedElection{
+  background: lightpink;
+}
+
+/* Party Boards */
+#liberalBoard
+{
+  margin: 1%;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+}
+#fascistBoard
+{
+  margin: 1%;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+}
+.liberalBoardSpot
+{
+  margin: 3px;
+  flex: 1;
+  background: lightblue;
+  display: flex;
+  flex-direction: row;
+}
+.liberalBoardFill
+{
+  margin: 10%;
+  flex: 1;
+  background: whitesmoke;
+}
+.liberalEnacted
+{
+  background: blue;
+}
+.fascistBoardSpot
+{
+  margin: 3px;
+  flex: 1;
+  background: lightpink;
+  display: flex;
+  flex-direction: row;
+}
+.fascistBoardFill
+{
+  margin: 10%;
+  flex: 1;
+  background: whitesmoke;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+.fascistEnacted
+{
+  background: red;
+}
+.hitlerDanger
+{
+  background: orange;
+}

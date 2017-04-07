@@ -13,22 +13,22 @@ secretHitlerApp.controller('joinController', function($scope, $state, sessionSer
 				name: name,
 				code: code
 			}, (res) => {
-			if(res.result == 'full'){
-				alert('Game is full!');
-			}
-			else if (res.result == 'dne'){
-				alert('Game "' + submittedCode + '" does not exist!');
-			}
-			else if (res.result == 'repeatName'){
-				alert('Someone is already using the name ' + submittedName + '!');
-			}
-			else{
-				socket.off('joinGameResponse');
-				sessionService.name = submittedName;
-				sessionService.code = submittedCode;
-				sessionService.resumeState = res.state;
-				$state.transitionTo('game.awaitStart');
-			}
+				if(res.result == 'full'){
+					alert('Game is full!');
+				}
+				else if (res.result == 'dne'){
+					alert('Game "' + submittedCode + '" does not exist!');
+				}
+				else if (res.result == 'repeatName'){
+					alert('Someone is already using the name ' + submittedName + '!');
+				}
+				else{
+					socket.off('joinGameResponse');
+					sessionService.name = submittedName;
+					sessionService.code = submittedCode;
+					sessionService.resumeState = res.state;
+					$state.transitionTo('game.awaitStart');
+				}
 		});
   }
 });

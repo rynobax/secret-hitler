@@ -1,14 +1,83 @@
-<div class="container">
-  <div class="jumbotron">
-    <h1 class="text-center">Room Code: {{code}}</h1>
-		<ul class="unstyled">
-			<li ng-repeat="player in players">
-				{{player}}
-                <span ng-show="player == president"> president</span>
-                <span ng-show="player == chancellor"> chancellor</span>
-                <span ng-show="player == lastPresident"> lastPresident</span>
-                <span ng-show="player == lastChancellor"> lastChancellor</span>
-			</li>
-		</ul>
+<link rel="stylesheet" type="text/css" href="assets/css/board.css">
+<div class="wrapper">
+  <div class='myHeader'>
+    <div class="row">
+      <div class="col text-center">
+        <h1 id="header">{{code}}</h1>
+      </div>
+      <div class="col-10 text-center">
+        <h1 id="header">Secret Hitler</h1>
+      </div>
+      <div class="col">
+      </div>
+    </div>
+  </div>
+  <div id="board">
+    <div id="boardMain">
+      <!-- Contains Faction boards, election ticker -->
+      <div id="partyBoards">
+        <div id="liberalBoard">
+          <div class="liberalBoardSpot" 
+            ng-repeat="i in getLiberalTiles() track by $index"
+          >
+            <div class="liberalBoardFill"
+              ng-class="{
+                liberalEnacted:$index<liberalEnacted
+              }">
+            </div>
+          </div>
+        </div>
+        <div id="fascistBoard">
+          <div class="fascistBoardSpot" 
+            ng-repeat="ability in getFascistTiles() track by $index"
+          >
+            <div class="fascistBoardFill"
+            ng-class="{
+              fascistEnacted:$index<fascistEnacted,
+              hitlerDanger:$index>=fascistHitlerThreshold
+            }">
+              <h2>{{ability}}</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="failedElectionTracker">
+        <div class="failedElectionSlot"
+         ng-repeat="i in getFailedElection() track by $index"
+          ng-class="{
+            fascistEnacted:$index<failedElectionCount
+          }"
+         >
+        </div>
+      </div>
+      <div id="stateInfo">
+        {{phaseName}}
+      </div>
+    </div>
+    <div id="boardFooter">
+      <!-- Contains a column for each player that shows players status -->
+      <div ng-repeat="player in players" class="playerBox">
+        <div class="voteArea" ng-class="{
+              awaitingVote:player.awaitingVote==true,
+              voteYes:player.vote=='yes',
+              voteNo:player.vote=='no'
+            }">
+            <h3 ng-show="player.awaitingVote==true">...</h3>
+            <h3 ng-show="player.vote=='yes'">Ja!</h3>
+            <h3 ng-show="player.vote=='no'">Nien!</h3>
+        </div>
+        <div class="playerInfo">
+          <h2>{{player.name}}</h2>
+        </div>
+        <div class="electedPosition"
+          ng-class="{
+            president:player.name==president,
+            chancellor:player.name==chancellor
+          }">
+          <h3 ng-show="player.name==president">President</h3>
+          <h3 ng-show="player.name==chancellor">Chancellor</h3>
+        </div>
+      </ng-repeat>
+    </div>
   </div>
 </div>

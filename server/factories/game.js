@@ -7,11 +7,12 @@ module.exports = function(_code, _socket, _io){
 
 	/**
 	 * Player
-	 * 	string name
-	 * 	Socket socket
-	 * 	string role
-	 * 	bool	 alive
-	 *  awaitingVote
+	 * 	name string
+	 * 	socket Socket
+	 * 	role string
+	 * 	alive bool
+	 *  awaitingVote bool
+	 *  vote string
 	 */
 	let players = [];
 
@@ -45,11 +46,11 @@ module.exports = function(_code, _socket, _io){
 	let lastRoundVotePassed = false;
 
 	/* Presidential Abilities */
-	function getPresidentialAbility(){
+	function getAbilities(){
 		const playerCount = players.length
-		const fascistEnacted = getFascistEnactedCount();
 		let abilities = [];
 		switch(playerCount){
+			case 0:
 			case 1:
 			case 2:
 			case 3:
@@ -70,11 +71,18 @@ module.exports = function(_code, _socket, _io){
 				throw Error('Too many players!');
 				break;
 		}
+		return abilities
+	}
+
+	function getPresidentialAbility(){
+		const fascistEnacted = getFascistEnactedCount();
+		const abilities = getAbilities();
 		return abilities[fascistEnacted-1];
 	}
 
 	/* Failed election tracker */
 	let failedElectionCount = 0;
+	const failedElectionThreshold = 3;
 
 	/* Policy tracker */
 	let enacted = [];
@@ -107,22 +115,30 @@ module.exports = function(_code, _socket, _io){
 	function getState(_phase){
 		if(_phase) phase = _phase;
 		return {
+			code: code,
 			players: players.map(e => {
 				return {
 					name: e.name,
 					role: e.role,
 					alive: e.alive,
-					awaitingVote: e.awaitingVote
+					awaitingVote: e.awaitingVote,
+					vote: e.vote
 				}
 			}
 			),
 			phase: phase,
-			code: code,
 			president: president,
 			chancellor: chancellor,
-			lastChancellor: lastChancellor,
-			lastPresident: lastPresident,
-			code: code
+			lastChancellor: lastChancellor || null,
+			lastPresident: lastPresident || null,
+			liberalEnacted: getLiberalEnactedCount(),
+			liberalNeeded: liberalPoliciesToWin,
+			fascistEnacted: getFascistEnactedCount(),
+			fascistNeeded: fascistPoliciesToWin,
+			fascistHitlerThreshold: fascistHitlerThreshold,
+			failedElectionCount: failedElectionCount,
+			failedElectionThreshold: failedElectionThreshold,
+			abilities: getAbilities()
 		}
 	}
 
@@ -222,7 +238,7 @@ module.exports = function(_code, _socket, _io){
 		// Examine the top 3 cards on draw pile
 		return new Promise((resolve, reject) => {
 			const cards = drawCards(3);
-			drawPile.push(...cards);
+			drawPile.unshift(...cards);
 			emitState({
 				name: 'examineCards',
 				cards: cards
@@ -315,7 +331,7 @@ module.exports = function(_code, _socket, _io){
 					}
 				}else{
 					failedElectionCount++;
-					if(failedElectionCount > 3){
+					if(failedElectionCount > failedElectionThreshold){
 						failedElectionCount = 0;
 						enacted.push(drawCards(1));
 						return true;
@@ -345,7 +361,12 @@ module.exports = function(_code, _socket, _io){
 
 	// Resolves result of overall vote (true or false)
 	function voteOnChancellor(nominatedChancellor){
-		players.forEach((player) => player.awaitingVote = true);
+		players.forEach((player) => {
+			if(player.alive){
+				player.awaitingVote = true;
+				player.vote = '';
+			}
+		});
 		emitState({
 			name: 'voteChancellor',
 			nominatedChancellor: nominatedChancellor
@@ -388,11 +409,18 @@ module.exports = function(_code, _socket, _io){
 		});
 	}
 
+	// Resolves true if they voted yes, false if no
 	function getChancellorVote(player){
 		console.log('got vote from ' + player.name);
 		return new Promise((resolve, reject) => {
 			player.socket.once('voteChancellorResponse', (response) => {
 				player.awaitingVote = false;
+				if(response){
+					player.vote = 'yes';
+				}else{
+					player.vote = 'no';
+				}
+				emitState();
 				resolve(response);
 			});
 		});
@@ -457,13 +485,13 @@ module.exports = function(_code, _socket, _io){
 	}
 
 	function getRoles(){
-		return ['Hitler', 'Fascist', 'Liberal', 'Liberal', 'Liberal', 'Liberal', 'Facist', 'Liberal', 'Facist', 'Liberal']
-			.slice(0, players.length);
+		return _.shuffle(['Hitler', 'Fascist', 'Liberal', 'Liberal', 'Liberal', 'Liberal', 'Facist', 'Liberal', 'Facist', 'Liberal']
+			.slice(0, players.length));
 	}
 
 	function assignRoles(){
 		const roles = getRoles();
-		_.shuffle(players.map(e => e.name)).forEach((name, i) => {
+		players.map(e => e.name).forEach((name, i) => {
 			const player = findPlayer(name);
 			const role = roles[i];
 			player.role = role;
