@@ -7,4 +7,4 @@ Run with `npm start`
 Connect on port 80.
 
 ## Todo
-  *Cooler screen displayed on main screen
+* Cooler screen displayed on main screen
