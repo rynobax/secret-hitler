@@ -6,8 +6,5 @@ Run with `npm start`
 
 Connect on port 80.
 
-## Todo
-* Cooler main screen
-* Support multiple games from the same server
-* Show notification that game is over
-* Allow starting of new game once game ends
+## Pictures
+Coming soon
