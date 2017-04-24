@@ -8,3 +8,6 @@ Connect on port 80.
 
 ## Pictures
 Coming soon
+
+## Todo
+Sound effects
