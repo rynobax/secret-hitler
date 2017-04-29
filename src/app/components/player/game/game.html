@@ -1,39 +1,25 @@
-<style>
-.myHeader
-{
-    background-color: #Aba6cb;
-    margin: 0px;
-    padding: 0px;
-    height: 80px;
-}
-#infoButton
-{
-  height: 80px;
-  width: 80px;
-}
-</style>
-
 <role-modal></role-modal>
 
-<div class='myHeader container mx-auto'>
-  <div class="row">
-    <div class="col">
-    </div>
-    <div class="col-8 text-center">
-      <h1 id="header">{{name}}</h1>
-    </div>
-    <div class="col">
-      <button 
-        id="infoButton" 
-        type="button" 
-        class="btn btn-info pull-right" 
-        data-toggle="modal" 
-        data-target="#roleModal"
-        ng-show="!!me.role"
-        >
-        <i class="fa fa-info-circle fa-3x"></i>
-      </button>
+<div id="gameDiv">
+  <div class='myHeader container mx-auto'>
+    <div class="row">
+      <div class="col">
+      </div>
+      <div class="col-8 text-center">
+        <h1 id="header">{{name}}</h1>
+      </div>
+      <div class="col">
+        <button 
+          id="infoButton" 
+          type="button" 
+          class="btn btn-info pull-right" 
+          ng-show="!!me.role"
+          ng-click="showRole()"
+          >
+          <i class="fa fa-info-circle fa-3x"></i>
+        </button>
+      </div>
     </div>
   </div>
-  <ui-view></ui-view>
+  <ui-view id="uiView"></ui-view>
 </div>

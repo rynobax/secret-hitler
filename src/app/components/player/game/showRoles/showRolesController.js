@@ -5,4 +5,5 @@ secretHitlerApp.controller('showRolesController', function($scope, $state, sessi
   $scope.players = sessionService.state.players;
   $scope.fascists = $scope.players.filter(player => player.role == 'Fascist');
   $scope.hitlers = $scope.players.filter(player => player.role == 'Hitler');
+  console.log('fascists: ', $scope.fascists);
 });

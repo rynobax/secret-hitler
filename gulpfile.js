@@ -17,6 +17,7 @@ gulp.task('other', () => {
 gulp.task('js', () => {
     return gulp.src('./src/**/*.js')
         .pipe(babel({
+            //presets: ['es2015', 'babili']
             presets: ['es2015']
         }))
         .pipe(gulp.dest('./public'));

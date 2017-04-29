@@ -138,7 +138,8 @@ module.exports = function(_code, _socket, _io){
 			fascistHitlerThreshold: fascistHitlerThreshold,
 			failedElectionCount: failedElectionCount,
 			failedElectionThreshold: failedElectionThreshold,
-			abilities: getAbilities()
+			abilities: getAbilities(),
+			voteInProgress: players.some(e => e.awaitingVote)
 		}
 	}
 
@@ -169,7 +170,7 @@ module.exports = function(_code, _socket, _io){
 		randomizePresidentOrder();
 		showRoles();
 		started = true;
-		setTimeout(beginRound, 1000);
+		setTimeout(beginRound, 8 * 1000);
 	}
 
 	function beginRound(){
@@ -201,7 +202,6 @@ module.exports = function(_code, _socket, _io){
 					const lastPolicyEnacted = enacted.slice(-1)[0];
 					if(lastPolicyEnacted == 'Fascist'){
 						const ability = getPresidentialAbility();
-						console.log('ability: ', ability);
 						switch(ability){
 							case null:
 								return;
@@ -237,6 +237,10 @@ module.exports = function(_code, _socket, _io){
 	function examineCards(){
 		// Examine the top 3 cards on draw pile
 		return new Promise((resolve, reject) => {
+			if(drawPile.length < 3){
+				// Shuffle cards
+				shuffle();
+			}
 			const cards = drawCards(3);
 			drawPile.unshift(...cards);
 			emitState({
@@ -303,9 +307,12 @@ module.exports = function(_code, _socket, _io){
 
 	function shuffleIfNecessary(){
 		if(drawPile.length < 3){
-			const allCards = _.concat(drawPile, discardPile);
-			drawPile = _.shuffle(allCards);
+			shuffle();
 		}
+	}
+
+	function shuffle(){
+			drawPile = _.concat(drawPile, _.shuffle(discardPile));
 	}
 
 	// Resolves true if policy was enacted, false if not
@@ -331,7 +338,7 @@ module.exports = function(_code, _socket, _io){
 					}
 				}else{
 					failedElectionCount++;
-					if(failedElectionCount > failedElectionThreshold){
+					if(failedElectionCount >= failedElectionThreshold){
 						failedElectionCount = 0;
 						enacted.push(drawCards(1));
 						return true;
@@ -411,7 +418,6 @@ module.exports = function(_code, _socket, _io){
 
 	// Resolves true if they voted yes, false if no
 	function getChancellorVote(player){
-		console.log('got vote from ' + player.name);
 		return new Promise((resolve, reject) => {
 			player.socket.once('voteChancellorResponse', (response) => {
 				player.awaitingVote = false;
@@ -439,7 +445,6 @@ module.exports = function(_code, _socket, _io){
 				})
 				.then(enact => {
 					// TODO: Add support for vetoing
-					console.log('enact: ', enact);
 					if(enact == false){
 						// It was vetoed
 						cards.forEach((card) => {
@@ -478,7 +483,6 @@ module.exports = function(_code, _socket, _io){
 		});
 		return new Promise((resolve, reject) => {
 			findPlayer(chancellor).socket.once('chancellorChooseCardResponse', (enact) => {
-				console.log('enact: ', enact);
 				resolve(enact);
 			});
 		});
@@ -503,7 +507,9 @@ module.exports = function(_code, _socket, _io){
 	}
 
 	function setNextPresident(){
-		players.push(players.shift());
+		do {
+			players.push(players.shift());
+		} while(players[0].alive == false);
 		if(lastRoundVotePassed){
 			lastChancellor = chancellor;
 			lastPresident = president;

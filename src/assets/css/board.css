@@ -87,10 +87,15 @@
   justify-content: center;
   flex-direction: column;
   text-align: center;
+  background-color: lightgreen;
 }
 .awaitingVote
 {
   background-color: lightgray;
+}
+.voteResponse
+{
+  flex: 1;
 }
 .voteYes
 {

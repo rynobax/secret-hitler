@@ -30,6 +30,7 @@ secretHitlerApp.controller('boardController', function($scope, $state, sessionSe
     $scope.fascistHitlerThreshold = state.fascistHitlerThreshold;
     $scope.failedElectionCount = state.failedElectionCount;
     $scope.failedElectionThreshold = state.failedElectionThreshold;
+    $scope.voteInProgress = state.voteInProgress;
     $scope.abilities = state.abilities.map(e => {
       if(!e) return e;
       return e.charAt(0).toUpperCase() + e.slice(1);

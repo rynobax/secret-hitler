@@ -1,12 +1,15 @@
-<div class="text-center">
+<div class="text-center" id="cardsHeader">
   <h2>Choose a card to enact!</h2>
 </div>
-<div>
-  <div ng-repeat="card in cards track by $index">
-    <button 
-      class="btn btn-default" 
-      ng-click="chooseCard(card)">
-      {{card}}
-    </button>
-  </div>
+<div class="cards">
+  <button 
+    class="btn btn-default card text-center"
+    ng-repeat="card in cards track by $index"
+    ng-click="chooseCard(card)"
+    ng-class="{
+            liberalCard:card=='Liberal',
+            fascistCard:card=='Fascist'
+          }">
+    <b>{{card}}</b>
+  </button>
 </div>

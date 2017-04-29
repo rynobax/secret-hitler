@@ -7,6 +7,10 @@ secretHitlerApp.controller('gameController', function($scope, $state, sessionSer
 
 	angular.element('#modal').modal('hide');
 
+	$scope.showRole = function(){
+		alert('Role: ' + $scope.me.role);
+	}
+
 	if(sessionService.resumeState){
 		const state = sessionService.resumeState;
 		sessionService.resumeState = null;

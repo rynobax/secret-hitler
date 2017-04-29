@@ -1,0 +1,75 @@
+/* game.html */
+.myHeader
+{
+    background-color: #Aba6cb;
+    margin: 0px;
+    padding: 0px;
+    height: 15vh;
+}
+#infoButton
+{
+  height: 15vh;
+  width: 15vh;
+}
+#gameDiv
+{
+  height: 100vh;
+}
+#uiView
+{
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* *ChooseCard.html */
+.liberalCard
+{
+  background-color: lightblue;
+}
+
+.fascistCard
+{
+  background-color: pink;
+}
+
+.card
+{
+  flex: 1;
+  align-items: center;
+  margin: 5%;
+}
+
+.cards
+{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+#cardsHeader
+{
+  flex: 1;
+}
+
+/* PickNextPlayer*.html */
+.player
+{
+  flex: 1;
+  align-items: center;
+  margin-bottom: 15px;
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+.players
+{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+#pickPlayerHeader
+{
+  flex: 1;
+}

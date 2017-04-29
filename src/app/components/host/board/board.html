@@ -57,17 +57,24 @@
     <div id="boardFooter">
       <!-- Contains a column for each player that shows players status -->
       <div ng-repeat="player in players" class="playerBox">
-        <div class="voteArea" ng-class="{
-              awaitingVote:player.awaitingVote==true,
+        <div class="voteArea"
+          ng-class="{
+              awaitingVote:player.awaitingVote==true
+            }">
+            <div class="voteResponse"
+            ng-show="voteInProgress==false" 
+            ng-class="{
               voteYes:player.vote=='yes',
               voteNo:player.vote=='no'
             }">
-            <h3 ng-show="player.awaitingVote==true">...</h3>
-            <h3 ng-show="player.vote=='yes'">Ja!</h3>
-            <h3 ng-show="player.vote=='no'">Nien!</h3>
+              <h3 ng-show="player.awaitingVote==true">...</h3>
+              <h3 ng-show="player.vote=='yes'">Ja!</h3>
+              <h3 ng-show="player.vote=='no'">Nien!</h3>
+            </div>
         </div>
         <div class="playerInfo">
-          <h2>{{player.name}}</h2>
+          <h2 ng-show="player.alive">{{player.name}}</h2>
+          <h2 ng-show="!player.alive"><del>{{player.name}}</del></h2>
         </div>
         <div class="electedPosition"
           ng-class="{

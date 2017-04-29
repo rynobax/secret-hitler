@@ -1,12 +1,11 @@
-<div class="text-center">
+<div class="text-center" id="pickPlayerHeader">
   <h2>Choose the next President!</h2>
 </div>
-<div>
-  <div ng-repeat="player in players track by $index">
-    <button 
-      class="btn btn-default" 
-      ng-click="choose(player)">
-      {{player}}
-    </button>
-  </div>
+<div class="players">
+  <button 
+    class="btn btn-default player text-center" 
+    ng-click="choose(player)"
+    ng-repeat="player in players track by $index">
+    {{player}}
+  </button>
 </div>

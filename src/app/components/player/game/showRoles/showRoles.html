@@ -19,9 +19,9 @@
 <!-- Hitler -->
 <div ng-show="role == 'Hitler'">
   <h2>You are Hitler!</h2>
-  <div ng-show="players.length > 8">
+  <div ng-show="players.length <= 5">
     Fascists:
-    <ul class="list-group" ng-repeat="player in facists">
+    <ul class="list-group" ng-repeat="player in fascists">
       <li class="list-group-item">{{player.name}}</li>
     </ul>
   </div>

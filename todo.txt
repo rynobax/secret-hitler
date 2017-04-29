@@ -1,0 +1,11 @@
+*TODO*
+sounds effects
+Show if someone wins the game
+Make game restart automatically
+Everyone should have ready button
+Beef up state text
+
+Sounds:
+  Fascist enacted
+  Liberal enacted
+  Text to speech
