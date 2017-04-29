@@ -143,6 +143,10 @@ module.exports = function(_code, _socket, _io){
 		}
 	}
 
+	function canStart(){
+		return players.count >= 5 && players.count <= 10;
+	}
+
 	function addPlayer(name, playerSocket){
 		if(started) return false;
 		if(players.length < 10){
@@ -152,7 +156,8 @@ module.exports = function(_code, _socket, _io){
 			playerSocket.on('startGameRequest', start);
 			emitState({
 				name: 'lobby',
-				ready: true
+				ready: canStart(),
+				winner: null
 			});
 			return true;
 		}else{
@@ -165,11 +170,13 @@ module.exports = function(_code, _socket, _io){
 	}
 
 	function start(){
+		started = true;
 		hitlerCanWin = false;
 		assignRoles();
 		randomizePresidentOrder();
 		showRoles();
-		started = true;
+		shuffle();
+		shuffle();
 		setTimeout(beginRound, 8 * 1000);
 	}
 
@@ -227,10 +234,19 @@ module.exports = function(_code, _socket, _io){
 			})
 			.then((winner) => {
 				if(winner){
-					console.log('The game is over, ' + winner + ' won');
+					end(winner);
 				}else{
 					beginRound();
 				}
+			});
+	}
+
+	function end(winner){
+		started = false;
+		emitState({
+				name: 'lobby',
+				ready: canStart(),
+				winner: winner
 			});
 	}
 

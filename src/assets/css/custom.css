@@ -73,3 +73,28 @@
 {
   flex: 1;
 }
+
+/* Lobby.html */
+.lobbyDiv
+{
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#fascistWinner
+{
+  flex: 3;
+  background: pink;
+}
+
+#liberalWinner
+{
+  flex: 3;
+  background: lightblue;
+}
+
+#roomInfo
+{
+  flex: 1
+}
