@@ -144,7 +144,7 @@ module.exports = function(_code, _socket, _io){
 	}
 
 	function canStart(){
-		return players.count >= 5 && players.count <= 10;
+		return players.length >= 5 && players.length <= 10;
 	}
 
 	function addPlayer(name, playerSocket){
@@ -246,7 +246,8 @@ module.exports = function(_code, _socket, _io){
 		emitState({
 				name: 'lobby',
 				ready: canStart(),
-				winner: winner
+				winner: winner,
+				alive: true
 			});
 	}
 
