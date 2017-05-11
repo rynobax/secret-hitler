@@ -1,5 +1,5 @@
 # secret-identity-game
-A web application to play a popular secret identity game [Secret Hitler](http://www.secrethitler.com/) on your smartphone in the style of Jackbox Games.
+A web application to play the popular social deduction game [Secret Hitler](http://www.secrethitler.com/) on your smartphone in the style of Jackbox Games.
 
 ## Running Server
 Run with `npm start`
